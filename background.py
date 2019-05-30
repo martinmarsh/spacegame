@@ -37,6 +37,7 @@ class Ground:
         while pos < end:
             x = pos - self.lead_in
             if self.object_list[pos] != 0:
+                obj = self.object_list[pos]
                 # Draw object
                 y = self.object_mask[pos]+1
                 x2 = x
@@ -45,7 +46,10 @@ class Ground:
                     x2 += 1
                 ybase = y + 17
                 pyxel.line(x, ybase, x2, ybase, self.ground_colour)
-                pyxel.rect(x, y, x2, y+16, 5)
+                if obj == 2:
+                    pyxel.blt(x, y, 0, 0, 16, 16, 16)
+                else:
+                    pyxel.blt(x, y, 0, 48, 0, 16, 16)
                 y = ybase
 
             else:
@@ -63,6 +67,7 @@ class Ground:
         if y >= obj_y:
             collision = True
             obj = self.object_list[pos]
+            pyxel.blt(x, y, 0, 16, 0, 16, 16)
 
         return collision, obj
 
@@ -76,7 +81,8 @@ class Ground:
     def sprite_add(self):
         # randomly add an object to the object mask
         if self.sprite_lock_out == 0 and randrange(1, 70) == 10:
-            sprite_type = randrange(2, 3)
+            sprite_type = randrange(1, 3)
+            print(sprite_type)
             sprite_len = 16
             sprite_height = 16
             start = W + self.lead_in
