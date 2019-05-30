@@ -1,4 +1,4 @@
-from config import W
+from config import W, H
 from random import randrange
 import pyxel
 
@@ -8,14 +8,18 @@ class Ground:
     def __init__(self):
         self.baseline = None
         self.rate = None
-        self.yo = None
         self.yx = self.yo = None
+        self.y_max = self.y_min = self.y_range = self.y_base = None
 
     def reset(self):
         self.baseline = []
         self.rate = 1
-        self.yo = 200
-        self.yx = self.yo
+        self.y_base = H * 2//3
+        self.y_range = H // 6
+        self.y_max = self.y_base + self.y_range
+        self.y_min = self.y_base - self.y_range
+
+        self.yo = self.yx = self.y_base
         for yd in range(1, W):
             self.ground_add()
 
@@ -39,8 +43,8 @@ class Ground:
             self.rate = -self.rate
 
         self.yx = self.yx + randrange(0, 3) * self.rate
-        if self.yx > 230:
-            self.yx = 200
-        elif self.yx < 150:
-            self.yx = 200
+        if self.yx > self.y_max:
+            self.yx -= self.y_range
+        elif self.yx < self.y_min:
+            self.yx += self.y_range
         self.baseline.append(self.yx)
