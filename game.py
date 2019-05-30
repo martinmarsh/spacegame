@@ -13,7 +13,7 @@ class Game:
         pyxel.init(W - 1, H - 1, caption="", fps=60)
         pyxel.load(ASSET_PATH)
         self.ground = Ground()
-        self.player = Player()
+        self.player = Player(self.ground)
         self.reset()
 
     def reset(self):

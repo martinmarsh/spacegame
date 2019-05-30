@@ -5,23 +5,29 @@ import pyxel
 
 class Player():
 
-    def __init__(self):
+    def __init__(self, ground):
         self.player_x = W/2
         self.player_y = H/3
         self.bomb = None
         self.bomb_dropped = False
+        self.ground = ground
+        self.bomb_collision = self.player_collision = False
 
     def reset(self):
         self.player_x = W/2
         self.player_y = H/3
 
     def draw(self):
-        pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16)
+        if self.player_collision:
+            pyxel.blt(self.player_x, self.player_y, 0, 16, 0, 16, 16)
+        else:
+            pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16)
         if self.bomb:
             self.bomb.draw()
 
     def update(self):
         self.player_move()
+        self.player_collision, obj = self.ground.collision(self.player_x, self.player_y)
 
         if pyxel.btnp(pyxel.KEY_SPACE):
             self.bomb = Bomb(self.player_x, self.player_y)
@@ -29,6 +35,9 @@ class Player():
 
         if self.bomb_dropped:
             self.bomb.update()
+            self.bomb_collision, obj = self.ground.collision(self.bomb.bomb_x, self.bomb.bomb_y)
+            if self.bomb_collision:
+                self.bomb.explode_bomb()
 
     def player_move(self):
         if pyxel.btn(pyxel.KEY_UP):

@@ -62,12 +62,14 @@ class Ground:
     def collision(self, x, y):
         collision = False
         obj = None
+        x = int(x)
         pos = x + self.lead_in
-        obj_y = max(self.object_mask[pos], self.ground_line[pos])
-        if y >= obj_y:
+        obj_y = int(max(self.object_mask[pos], self.ground_line[pos]))
+        y = int(y)
+
+        if y >= obj_y - 16:
             collision = True
             obj = self.object_list[pos]
-            pyxel.blt(x, y, 0, 16, 0, 16, 16)
 
         return collision, obj
 
@@ -82,7 +84,6 @@ class Ground:
         # randomly add an object to the object mask
         if self.sprite_lock_out == 0 and randrange(1, 70) == 10:
             sprite_type = randrange(1, 3)
-            print(sprite_type)
             sprite_len = 16
             sprite_height = 16
             start = W + self.lead_in
