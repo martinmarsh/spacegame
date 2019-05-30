@@ -14,13 +14,14 @@ class Game:
         """
         Set up game here
         """
-        self.ground = self.ground.reset()
+        self.ground.reset()
 
     def run(self):
         pyxel.run(self.update, self.draw)
 
     def update(self):
         self.ground.update()
+        pass
 
     def draw(self):
         pyxel.cls(0)

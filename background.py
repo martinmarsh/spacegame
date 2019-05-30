@@ -1,5 +1,6 @@
-import pyxel
+from config import W
 from random import randrange
+import pyxel
 
 
 class Ground:
@@ -15,13 +16,21 @@ class Ground:
         self.rate = 1
         self.yo = 200
         self.yx = self.yo
-
-    def draw(self):
-        for yd in range(1, 255):
+        for yd in range(1, W):
             self.ground_add()
 
-    def update(self):
+    def draw(self):
+        x = 0
+        y = self.yo
+        for y2 in self.baseline:
+            x2 = x + 1
+            pyxel.line(x, y, x2, y2, 11)
+            x = x2
+            y = y2
 
+    def update(self):
+        self.yo = self.baseline.pop(0)
+        self.ground_add()
 
     def ground_add(self):
         if randrange(1, 100) == 7:
