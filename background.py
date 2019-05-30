@@ -6,35 +6,87 @@ import pyxel
 class Ground:
 
     def __init__(self):
-        self.baseline = None
-        self.rate = None
+        self.lead_in = self.object_list = self.object_mask = self.ground_line = None
+        self.sprite_lock_out = self.rate = None
         self.yx = self.yo = None
         self.y_max = self.y_min = self.y_range = self.y_base = None
+        self.ground_colour = None
 
     def reset(self):
-        self.baseline = []
+        self.ground_line = []
+        self.object_mask = []
+        self.object_list = []
+        self.ground_colour = 9
         self.rate = 1
         self.y_base = H * 2//3
         self.y_range = H // 6
+        self.lead_in = 32         # extra bit of buffer for adding sprites and allowing clean exit
+        self.sprite_lock_out = 0
         self.y_max = self.y_base + self.y_range
         self.y_min = self.y_base - self.y_range
-
         self.yo = self.yx = self.y_base
-        for yd in range(1, W):
+        for yd in range(1, W + self.lead_in * 2):
             self.ground_add()
 
     def draw(self):
         x = 0
         y = self.yo
-        for y2 in self.baseline:
-            x2 = x + 1
-            pyxel.line(x, y, x2, y2, 11)
-            x = x2
-            y = y2
+        end = W + self.lead_in
+        pos = self.lead_in
+        y = self.ground_line[pos]
+        while pos < end:
+            x = pos - self.lead_in
+            if self.object_list[pos] != 0:
+                # Draw object
+                y = self.object_mask[pos]+1
+                x2 = x
+                while self.object_list[pos] != 0:
+                    pos += 1
+                    x2 += 1
+                ybase = y + 17
+                pyxel.line(x, ybase, x2, ybase, self.ground_colour)
+                pyxel.rect(x, y, x2, y+16, 5)
+                y = ybase
+
+            else:
+                # Draw ground
+                pos += 1
+                y2 = self.ground_line[pos]
+                pyxel.line(x, y, x+1, y2, self.ground_colour)
+                y = y2
+
+    def collision(self, x, y):
+        collision = False
+        obj = None
+        pos = x + self.lead_in
+        obj_y = max(self.object_mask[pos], self.ground_line[pos])
+        if y >= obj_y:
+            collision = True
+            obj = self.object_list[pos]
+
+        return collision, obj
 
     def update(self):
-        self.yo = self.baseline.pop(0)
+        self.ground_line.pop(0)
+        self.object_mask.pop(0)
+        self.object_list.pop(0)
         self.ground_add()
+        self.sprite_add()
+
+    def sprite_add(self):
+        # randomly add an object to the object mask
+        if self.sprite_lock_out == 0 and randrange(1, 70) == 10:
+            sprite_type = randrange(2, 3)
+            sprite_len = 16
+            sprite_height = 16
+            start = W + self.lead_in
+            sprite_top = self.ground_line[start] - sprite_height
+            for pos in range(start, start + sprite_len):
+                self.object_mask[pos] = sprite_top
+                self.object_list[pos] = sprite_type
+            self.sprite_lock_out += sprite_len
+        elif self.sprite_lock_out > 0:
+            self.sprite_lock_out -= 1
 
     def ground_add(self):
         if randrange(1, 100) == 7:
@@ -47,4 +99,8 @@ class Ground:
             self.yx -= self.y_range
         elif self.yx < self.y_min:
             self.yx += self.y_range
-        self.baseline.append(self.yx)
+        self.ground_line.append(self.yx)
+
+        self.object_mask.append(0)
+        self.object_list.append(0)
+
