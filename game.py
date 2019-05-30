@@ -1,16 +1,19 @@
 import pyxel
+import os
 from background import Ground
-from weapon import Bomb
+from player import Player
 from config import W, H
+
+ASSET_PATH = f"{os.getcwd()}/assets.pyxel"
 
 
 class Game:
 
     def __init__(self):
         pyxel.init(W - 1, H - 1, caption="", fps=60)
-        pyxel.load("assets.pyxel")
+        pyxel.load(ASSET_PATH)
         self.ground = Ground()
-        self.bomb = Bomb()
+        self.player = Player()
         self.reset()
 
     def reset(self):
@@ -24,13 +27,13 @@ class Game:
 
     def update(self):
         self.ground.update()
-        self.bomb.update()
+        self.player.update()
         pass
 
     def draw(self):
         pyxel.cls(0)
         self.ground.draw()
-        self.bomb.draw()
+        self.player.draw()
 
 
 if __name__ == '__main__':
