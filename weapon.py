@@ -27,7 +27,8 @@ class Bomb:
         self.bomb_exploded = False
 
     def draw(self):
-        pyxel.circ(self.player_x, self.player_y, 10, 8)
+        pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16)
+
         if self.bomb_exploded:
             pyxel.blt(self.bomb_x, self.bomb_y, 0, 16, 0, 16, 16)
             self.bomb_exploded = False
