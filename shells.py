@@ -1,4 +1,4 @@
-from random import randint as rand, random as randf
+from random import randint as rand, random as randf, randrange
 import math
 import pyxel
 
@@ -7,17 +7,56 @@ class Shells:
 
     def __init__(self, game):
         self.game = game
-        self.shells = ObjectPool()
+        self.ground = game.ground
+        self.guns = None
 
     def reset(self):
+        self.guns = ObjectPool()
 
-        pass
+    def create_gun(self, pos, x):
+        self.guns.insert(Gun(self.ground, pos+1, x))
 
     def update(self):
-        pass
+        for i, gun in self.guns.each():
+            gun.update()
+            if gun.off_screen:
+                self.guns.kill(i)
 
     def draw(self):
-        pass
+        for _, gun in self.guns.each():
+            gun.draw()
+
+
+class Gun:
+    def __init__(self, ground, pos, x):
+        self.x = x
+        self.ground = ground
+        self.pos = pos
+        self.off_screen = False
+        self.fire_period = randrange(60, 180)
+        self.time_to_fire = self.fire_period
+        self.gun_shells = ObjectPool()
+
+    def update(self):
+        self.pos -= 1
+        self.x -= 1
+        self.time_to_fire -= 1
+
+        if self.pos < 8:
+            self.off_screen = True
+        elif self.time_to_fire == 0:
+            y = self.ground.object_mask[self.pos]
+            self.gun_shells.insert(Shell(self.x, y))
+            self.time_to_fire = self.fire_period
+
+        for i, shell in self.gun_shells.each():
+            shell.update(self.x)
+            if shell.exploded:
+                self.gun_shells.kill(i)
+
+    def draw(self):
+        for _, shell in self.gun_shells.each():
+            shell.draw()
 
 
 class Shell:
@@ -25,13 +64,16 @@ class Shell:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.exploded = False
 
-    def update(self):
-        self.y -= 4
+    def update(self, x):
+        self.x = x
+        self.y -= 3
+        if self.y < 1 or x < 0:
+            self.exploded = True
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8)
-
+        pyxel.rect(self.x-1, self.y-2, self.x+1, self.y+2, 8)
 
 
 class ObjectPool:
@@ -146,5 +188,3 @@ class ParticleExample:
         pyxel.cls(0)
         for _, particle in self.particles.each():
             particle.draw()
-
-

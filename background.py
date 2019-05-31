@@ -5,18 +5,20 @@ import pyxel
 
 class Ground:
 
-    def __init__(self, ground):
+    def __init__(self, game):
         self.lead_in = self.object_list = self.object_mask = self.ground_line = None
         self.sprite_lock_out = self.rate = None
         self.yx = self.yo = None
         self.y_max = self.y_min = self.y_range = self.y_base = None
         self.ground_colour = None
-        self.ground = ground
+        self.gun_create_standoff = None
+        self.game = game
 
     def reset(self):
         self.ground_line = []
         self.object_mask = []
         self.object_list = []
+        self.gun_create_standoff = 0
         self.ground_colour = 9
         self.rate = 1
         self.y_base = H * 2//3
@@ -86,6 +88,13 @@ class Ground:
         self.object_list.pop(0)
         self.ground_add()
         self.sprite_add()
+        pos = W + self.lead_in
+        if self.object_list[pos] == 10 and self.gun_create_standoff <= 0:
+            self.game.shells.create_gun(pos, W + 4)
+            self.game.shells.create_gun(pos, W + 8)
+            self.gun_create_standoff = 17
+        else:
+            self.gun_create_standoff -= 1
 
     def sprite_add(self):
         # randomly add an object to the object mask
