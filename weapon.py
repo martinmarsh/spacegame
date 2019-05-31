@@ -13,6 +13,7 @@ class Bomb:
         self.ground_level = 160
         self.colour = 3
         self.bomb_exploded = False
+        pyxel.play(0, 0)
 
     def reset(self):
         self.bomb_x = 0
@@ -34,10 +35,11 @@ class Bomb:
             self.drop_bomb()
 
     def drop_bomb(self):
-        self.bomb_y = self.bomb_y + 4
+        self.bomb_y = self.bomb_y + 3
         self.bomb_count = 1
 
     def explode_bomb(self):
         self.bomb_count = 0
         self.bomb_exploded = True
+        pyxel.play(0, 1)
         self.reset()

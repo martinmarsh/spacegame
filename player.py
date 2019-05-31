@@ -50,7 +50,7 @@ class Player:
                     self.score.tanks_hit()
                 elif obj == 11:
                     self.score.guns_hit()
-                    
+
                 self.bomb.explode_bomb()
 
     def player_move(self):
