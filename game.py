@@ -2,7 +2,7 @@ import pyxel
 import os
 from background import Ground
 from score import Score
-from shells import Shells
+from shells import Guns
 from player import Player
 from config import W, H
 
@@ -15,9 +15,9 @@ class Game:
         pyxel.init(W - 1, H - 1, caption="", fps=60)
         pyxel.load(ASSET_PATH)
         self.ground = Ground(self)
-        self.shells = Shells(self)
         self.score = Score(self)
         self.player = Player(self)
+        self.guns = Guns(self)
         self.STATE = "PLAY"
         self.reset()
 
@@ -27,7 +27,7 @@ class Game:
         """
         self.ground.reset()
         self.score.reset()
-        self.shells.reset()
+        self.guns.reset()
         self.STATE = "PLAY"
 
     def run(self):
@@ -38,7 +38,7 @@ class Game:
             self.ground.update()
             self.player.update()
             self.score.update()
-            self.shells.update()
+            self.guns.update()
 
     def draw(self):
         pyxel.cls(0)
@@ -46,7 +46,7 @@ class Game:
             self.ground.draw()
             self.player.draw()
             self.score.draw()
-            self.shells.draw()
+            self.guns.draw()
         elif self.STATE == "DEAD":
             pyxel.blt(40, H/2 - 50, 1, 0, 0, 255, 86)
             pyxel.text((W/2) - 30, (H/2) + 30, f"Total Score: {self.score.total}", 8)

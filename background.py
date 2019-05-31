@@ -90,8 +90,8 @@ class Ground:
         self.sprite_add()
         pos = W + self.lead_in
         if self.object_list[pos] == 10 and self.gun_create_standoff <= 0:
-            self.game.shells.create_gun(pos, W + 4)
-            self.game.shells.create_gun(pos, W + 8)
+            self.game.guns.create_gun(pos, W + 4)
+            self.game.guns.create_gun(pos, W + 14)
             self.gun_create_standoff = 17
         else:
             self.gun_create_standoff -= 1

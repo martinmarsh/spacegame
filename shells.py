@@ -3,7 +3,7 @@ import math
 import pyxel
 
 
-class Shells:
+class Guns:
 
     def __init__(self, game):
         self.game = game
@@ -34,8 +34,8 @@ class Gun:
         self.game = game
         self.pos = pos
         self.off_screen = False
-        self.fire_period = randrange(60, 180)
-        self.time_to_fire = self.fire_period
+        self.fire_period = randrange(90, 240)
+        self.time_to_fire = 10
         self.gun_shells = ObjectPool()
 
     def update(self):
@@ -51,7 +51,7 @@ class Gun:
             self.time_to_fire = self.fire_period
 
         for i, shell in self.gun_shells.each():
-            shell.update(self.x)
+            shell.update()
             if shell.exploded:
                 self.gun_shells.kill(i)
 
@@ -66,16 +66,20 @@ class Shell:
         self.x = x
         self.y = y
         self.player = game.player
+        self.guns = game.guns
         self.exploded = False
 
-    def update(self, x):
-        self.x = x
-        self.y -= 3
+    def update(self):
+        self.x -= 0.5
+        self.y -= 1
 
-        if self.x == self.player.player_x and self.y == self.player.player_y:
+        if self.player.player_x <= self.x <= self.player.player_x + 16 and \
+                self.player.player_y >= self.y <= self.player.player_y + 16:
+            # take one life
+            self.guns.reset()
+            self.exploded = True
             self.player.score.player_hit()
-
-        if self.y < 1 or x < 0:
+        if self.y < 1 or self.x < 0:
             self.exploded = True
 
     def draw(self):

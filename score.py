@@ -29,8 +29,7 @@ class Score:
         pyxel.text(70, 3, "Lives:", 7)
         for count in range(self.player_count):
             pyxel.circ(self.lives_position + (count * 10), 5, 2, 8)
-
-        if self.player_count == 0:
+        if self.player_count <= 0:
             pyxel.text(100, 3, "Game over", 8)
             self.game.STATE = "DEAD";
 
