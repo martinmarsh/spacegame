@@ -14,7 +14,7 @@ class Shells:
         self.guns = ObjectPool()
 
     def create_gun(self, pos, x):
-        self.guns.insert(Gun(self.ground, pos+1, x))
+        self.guns.insert(Gun(self.game, pos+1, x))
 
     def update(self):
         for i, gun in self.guns.each():
@@ -28,9 +28,10 @@ class Shells:
 
 
 class Gun:
-    def __init__(self, ground, pos, x):
+    def __init__(self, game, pos, x):
         self.x = x
-        self.ground = ground
+        self.ground = game.ground
+        self.game = game
         self.pos = pos
         self.off_screen = False
         self.fire_period = randrange(60, 180)
@@ -46,7 +47,7 @@ class Gun:
             self.off_screen = True
         elif self.time_to_fire == 0:
             y = self.ground.object_mask[self.pos]
-            self.gun_shells.insert(Shell(self.x, y))
+            self.gun_shells.insert(Shell(self.game, self.x, y))
             self.time_to_fire = self.fire_period
 
         for i, shell in self.gun_shells.each():
@@ -61,14 +62,19 @@ class Gun:
 
 class Shell:
 
-    def __init__(self, x, y):
+    def __init__(self, game, x, y):
         self.x = x
         self.y = y
+        self.player = game.player
         self.exploded = False
 
     def update(self, x):
         self.x = x
         self.y -= 3
+
+        if self.x == self.player.player_x and self.y == self.player.player_y:
+            self.player.score.player_hit()
+
         if self.y < 1 or x < 0:
             self.exploded = True
 
