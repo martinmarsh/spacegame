@@ -20,8 +20,13 @@ class Player():
 
     def draw(self):
         if self.player_collision:
+            # Display explosion
             pyxel.blt(self.player_x, self.player_y, 0, 16, 0, 16, 16)
+            # update player hit count
+            self.score.player_hit()
+            self.reset()
         else:
+            # Display player
             pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16)
         if self.bomb:
             self.bomb.draw()
