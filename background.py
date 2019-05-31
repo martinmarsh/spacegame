@@ -5,12 +5,13 @@ import pyxel
 
 class Ground:
 
-    def __init__(self):
+    def __init__(self, ground):
         self.lead_in = self.object_list = self.object_mask = self.ground_line = None
         self.sprite_lock_out = self.rate = None
         self.yx = self.yo = None
         self.y_max = self.y_min = self.y_range = self.y_base = None
         self.ground_colour = None
+        self.ground = ground
 
     def reset(self):
         self.ground_line = []

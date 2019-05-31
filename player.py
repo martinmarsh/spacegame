@@ -5,12 +5,13 @@ import pyxel
 
 class Player():
 
-    def __init__(self, ground):
+    def __init__(self, game):
         self.player_x = W/2
         self.player_y = H/3
         self.bomb = None
         self.bomb_dropped = False
-        self.ground = ground
+        self.ground = game.ground
+        self.score = game.score
         self.bomb_collision = self.player_collision = False
 
     def reset(self):

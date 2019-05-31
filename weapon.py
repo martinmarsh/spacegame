@@ -34,10 +34,6 @@ class Bomb:
 
     def drop_bomb(self):
         self.bomb_y = self.bomb_y + 4
-
-        # if self.bomb_y > self.ground_level:
-        #   self.explode_bomb()
-
         self.bomb_count = 1
 
     def explode_bomb(self):
