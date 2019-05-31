@@ -9,16 +9,16 @@ class Score:
     def __init__(self, game):
         self.total = 0
         self.player_count = 3
-        self.guns_hit = 0
-        self.tanks_hit = 0
+        self.guns_num_hit = 0
+        self.tanks_num_hit = 0
         self.lives_position = 100
         self.game = game
 
     def reset(self):
         self.total = 0
         self.player_count = 3
-        self.guns_hit = 0
-        self.tanks_hit = 0
+        self.guns_num_hit = 0
+        self.tanks_num_hit = 0
 
     def update(self):
         pass
