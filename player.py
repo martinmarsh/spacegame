@@ -41,7 +41,7 @@ class Player():
 
         if self.bomb_dropped:
             self.bomb.update()
-            self.bomb_collision, obj = self.ground.collision(self.bomb.bomb_x, self.bomb.bomb_y)
+            self.bomb_collision, obj = self.ground.collision(self.bomb.bomb_x + 12, self.bomb.bomb_y + 8)
             if self.bomb_collision:
                 self.bomb.explode_bomb()
 
