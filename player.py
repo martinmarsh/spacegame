@@ -3,7 +3,7 @@ from weapon import Bomb
 import pyxel
 
 
-class Player():
+class Player:
 
     def __init__(self, game):
         self.player_x = W/2
@@ -41,8 +41,16 @@ class Player():
 
         if self.bomb_dropped:
             self.bomb.update()
+
             self.bomb_collision, obj = self.ground.collision(self.bomb.bomb_x + 12, self.bomb.bomb_y + 8)
+
             if self.bomb_collision:
+                # obj 10 = tank, 11 = gun
+                if obj == 10:
+                    self.score.tanks_hit()
+                elif obj == 11:
+                    self.score.guns_hit()
+                    
                 self.bomb.explode_bomb()
 
     def player_move(self):
