@@ -30,10 +30,8 @@ class Ground:
             self.ground_add()
 
     def draw(self):
-        x = 0
-        y = self.yo
         end = W + self.lead_in
-        pos = self.lead_in
+        pos = 0
         y = self.ground_line[pos]
         while pos < end:
             x = pos - self.lead_in
@@ -47,9 +45,11 @@ class Ground:
                     x2 += 1
                 ybase = y + 17
                 pyxel.line(x, ybase, x2, ybase, self.ground_colour)
-                if obj == 2:
+                if obj == 1:
+                    pyxel.blt(x, y, 0, 16, 0, 16, 16)
+                elif obj == 10:
                     pyxel.blt(x, y, 0, 0, 16, 16, 16)
-                else:
+                elif obj == 11:
                     pyxel.blt(x, y, 0, 48, 0, 16, 16)
                 y = ybase
 
@@ -71,6 +71,12 @@ class Ground:
         if y >= obj_y - 16:
             collision = True
             obj = self.object_list[pos]
+            if obj > 9:
+                # find start of object to replace with explosion
+                while self.object_list[pos-1] == obj:
+                    pos -= 1
+                for pos in range(pos, pos + 16):
+                    self.object_list[pos] = 1   # type 1 = explosion
 
         return collision, obj
 
@@ -84,7 +90,8 @@ class Ground:
     def sprite_add(self):
         # randomly add an object to the object mask
         if self.sprite_lock_out == 0 and randrange(1, 70) == 10:
-            sprite_type = randrange(1, 3)
+            # reserve 0 to 9,  10 = tanks, 11 = guns
+            sprite_type = randrange(10, 12)
             sprite_len = 16
             sprite_height = 16
             start = W + self.lead_in

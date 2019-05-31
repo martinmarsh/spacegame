@@ -24,13 +24,14 @@ class Bomb:
 
     def draw(self):
         if self.bomb_exploded:
-            pyxel.blt(self.bomb_x, self.bomb_y, 0, 16, 0, 16, 16)
+            # pyxel.blt(self.bomb_x, self.bomb_y, 0, 16, 0, 16, 16)
             self.bomb_exploded = False
-        else:
+        elif self.bomb_x != 0:
             pyxel.blt(self.bomb_x, self.bomb_y, 0, 8, 0, 8, 8)
 
     def update(self):
-        self.drop_bomb()
+        if self.bomb_x != 0:
+            self.drop_bomb()
 
     def drop_bomb(self):
         self.bomb_y = self.bomb_y + 4
@@ -39,3 +40,4 @@ class Bomb:
     def explode_bomb(self):
         self.bomb_count = 0
         self.bomb_exploded = True
+        self.reset()
