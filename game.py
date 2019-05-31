@@ -48,8 +48,8 @@ class Game:
             self.score.draw()
             self.shells.draw()
         elif self.STATE == "DEAD":
-            pyxel.text((W/2) - 30, H/2, "Game over", 8)
-            pyxel.text((W/2) - 30, (H/2) + 20, f"Total Score: {self.score.total}", 8)
+            pyxel.blt(40, H/2 - 50, 1, 0, 0, 255, 86)
+            pyxel.text((W/2) - 30, (H/2) + 30, f"Total Score: {self.score.total}", 8)
 
 
 if __name__ == '__main__':
