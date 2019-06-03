@@ -28,7 +28,7 @@ class Game:
         """
         self.ground.reset()
         self.score.reset()
-        self.shells.reset()
+        self.guns.reset()
         self.STATE = "INIT"
         self.guns.reset()
         
