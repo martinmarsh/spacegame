@@ -1,6 +1,7 @@
 from config import W, H
 from weapon import Bomb
 import pyxel
+import random
 
 
 class Player:
@@ -8,6 +9,7 @@ class Player:
     def __init__(self, game):
         self.player_x = W/2
         self.player_y = H/3
+        self.name = "Chris"
         self.bomb = None
         self.bomb_dropped = False
         self.ground = game.ground
@@ -59,3 +61,10 @@ class Player:
 
         if pyxel.btn(pyxel.KEY_DOWN):
             self.player_y = self.player_y + 2
+
+    def name_generator(self):
+        color = ["Red", "Blue", "Black", "White"]
+        tool = ["Hammer", "Drill", "Cutter", "Knife"]
+        random_number1 = random.randrange(0, len(color))
+        random_number2 = random.randrange(0, len(tool))
+        self.name = color[random_number1] + " " + tool[random_number2]

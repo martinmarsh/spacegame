@@ -1,4 +1,7 @@
+import os
+import csv
 import pyxel
+from pathlib import Path
 
 TANKS_HIT = 400
 GUNS_HIT = 200
@@ -27,11 +30,13 @@ class Score:
         total_score = f"Score: {self.total}"
         pyxel.text(3, 3, total_score, 7)
         pyxel.text(70, 3, "Lives:", 7)
+        pyxel.text(200, 3, self.game.player.name, 7)
         for count in range(self.player_count):
             pyxel.circ(self.lives_position + (count * 10), 5, 2, 8)
 
         if self.player_count == 0:
             pyxel.text(100, 3, "Game over", 8)
+            self.save()
             self.game.STATE = "DEAD";
 
     def player_hit(self):
@@ -42,3 +47,19 @@ class Score:
 
     def tanks_hit(self):
         self.total = self.total + TANKS_HIT
+
+    def save(self):
+        # Write scores to file.
+        have_file = True
+        file = "\scores.csv"
+        path = os.getcwd() + file
+        file_to_open = Path(path)
+        if file_to_open.is_file():
+            with open(path) as csvfile:
+                reader = csv.reader(csvfile)
+                for row in reader:
+                    print(row)
+
+        with open(path, 'w') as csvfile:
+            my_writer = csv.writer(csvfile)
+            my_writer.writerow([self.game.player.name, self.total])

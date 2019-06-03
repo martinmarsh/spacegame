@@ -18,7 +18,7 @@ class Game:
         self.shells = Shells(self)
         self.score = Score(self)
         self.player = Player(self)
-        self.STATE = "PLAY"
+        self.STATE = "INIT"
         self.reset()
 
     def reset(self):
@@ -28,13 +28,15 @@ class Game:
         self.ground.reset()
         self.score.reset()
         self.shells.reset()
-        self.STATE = "PLAY"
+        self.STATE = "INIT"
 
     def run(self):
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        if self.STATE == "PLAY":
+        if self.STATE == "INIT":
+            self.initialise()
+        elif self.STATE == "PLAY":
             self.ground.update()
             self.player.update()
             self.score.update()
@@ -42,7 +44,9 @@ class Game:
 
     def draw(self):
         pyxel.cls(0)
-        if self.STATE == "PLAY":
+        if self.STATE == "INIT":
+            self.initialise()
+        elif self.STATE == "PLAY":
             self.ground.draw()
             self.player.draw()
             self.score.draw()
@@ -50,6 +54,13 @@ class Game:
         elif self.STATE == "DEAD":
             pyxel.blt(40, H/2 - 50, 1, 0, 0, 255, 86)
             pyxel.text((W/2) - 30, (H/2) + 30, f"Total Score: {self.score.total}", 8)
+
+    def initialise(self):
+        pyxel.text((W/2) - 30, (H/2) + 30, "Please choose a name, hit letter 'N", 8)
+
+        if pyxel.btnp(pyxel.KEY_N):
+            self.player.name_generator()
+            self.STATE = "PLAY"
 
 
 if __name__ == '__main__':
