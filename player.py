@@ -12,6 +12,7 @@ class Player:
         self.name = "Chris"
         self.bomb = None
         self.bomb_dropped = False
+        self.game = game
         self.ground = game.ground
         self.score = game.score
         self.bomb_collision = self.player_collision = False
@@ -29,7 +30,7 @@ class Player:
             self.reset()
         else:
             # Display player
-            pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16)
+            pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16, 0)
         if self.bomb:
             self.bomb.draw()
 
@@ -48,10 +49,11 @@ class Player:
 
             if self.bomb_collision:
                 # obj 10 = tank, 11 = gun
-                if obj == 10:
+                if obj == 11:
                     self.score.tanks_hit()
-                elif obj == 11:
+                elif obj == 10:
                     self.score.guns_hit()
+                    self.game.guns.reset()
 
                 self.bomb.explode_bomb()
 
