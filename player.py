@@ -7,47 +7,49 @@ import random
 class Player:
 
     def __init__(self, game):
-        self.player_x = W/2
-        self.player_y = H/3
+        self.x = W / 2
+        self.y = H / 3
+        self.max_x = H - 50
         self.name = "Chris"
         self.game = game
         self.ground = game.ground
         self.score = game.score
-        self.player_collision = False
+        self.collision = False
 
     def reset(self):
-        self.player_x = W/2
-        self.player_y = H/3
-        self.player_collision = False
+        self.x = W / 2
+        self.y = H / 3
+        self.collision = False
 
     def draw(self):
         # Display player
-        pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16, 0)
+        pyxel.blt(self.x, self.y, 0, 32, 0, 16, 16, 0)
 
     def update(self):
-        self.player_move()
-        self.player_collision, _ = self.ground.collision(self.player_x, self.player_y)
-        if self.player_collision:
+        self.move()
+        self.collision, _ = self.ground.collision(self.x, self.y)
+        if self.collision:
             # update player hit count
             self.score.player_hit()
             pyxel.play(0, 1)
             self.reset()
 
         if pyxel.btnp(pyxel.KEY_SPACE):
-            self.game.bombs.insert(Bomb(self.game, self.player_x, self.player_y))
+            self.game.bombs.insert(Bomb(self.game, self.x, self.y))
 
-    def player_move(self):
-        if pyxel.btn(pyxel.KEY_UP):
-            self.player_y -= 2
+    def move(self):
 
-        if pyxel.btn(pyxel.KEY_DOWN):
-            self.player_y += 2
+        if pyxel.btn(pyxel.KEY_UP) and self.y > 20:
+            self.y -= 2
 
-        if pyxel.btn(pyxel.KEY_LEFT):
-            self.player_x -= 2
+        if pyxel.btn(pyxel.KEY_DOWN):      # always hits ground or below before reaching H
+            self.y += 2
 
-        if pyxel.btn(pyxel.KEY_RIGHT):
-            self.player_x += 2
+        if pyxel.btn(pyxel.KEY_LEFT) and self.x > 50:
+            self.x -= 2
+
+        if pyxel.btn(pyxel.KEY_RIGHT) and self.x < self.max_x:
+            self.x += 2
 
     def name_generator(self):
         color = ["Red", "Blue", "Black", "White"]

@@ -50,11 +50,11 @@ class Gun:
         elif self.time_to_fire == 0:
             y = self.ground.object_mask[self.pos]
             y_inc = 0
-            if self.player.player_x + 20 > self.x > 80:
-                time_to_hit = abs(self.player.player_y - y)
-                x_inc = (self.player.player_x - self.x)/time_to_hit
+            if self.player.x + 20 > self.x > 80:
+                time_to_hit = abs(self.player.y - y)
+                x_inc = (self.player.x - self.x)/time_to_hit
                 y_inc = -1
-            elif self.player.player_x < self.x:
+            elif self.player.x < self.x:
                 y_inc = -1
 
             if y_inc != 0:
@@ -82,8 +82,7 @@ class Shell:
         self.x += self.x_increment
         self.y += self.y_increment
 
-        if self.player.player_x <= self.x <= self.player.player_x + 16 and \
-                self.player.player_y <= self.y <= self.player.player_y + 10:
+        if self.player.x <= self.x <= self.player.x + 16 and self.player.y <= self.y <= self.player.y + 10:
             # take one life
             pyxel.play(0, 1)
             self.game.explosions.insert(ShellHitExplosion(self.x, self.y))
