@@ -59,17 +59,11 @@ class Gun:
                 y_inc = -1
 
             if y_inc != 0:
-                self.gun_shells.insert(Shell(self.game, self.x, y, x_inc, y_inc))
+                self.game.shells.insert(Shell(self.game, self.x, y, x_inc, y_inc))
             self.time_to_fire = self.fire_period
 
-        for i, shell in self.gun_shells.each():
-            shell.update()
-            if shell.exploded:
-                self.gun_shells.kill(i)
-
     def draw(self):
-        for _, shell in self.gun_shells.each():
-            shell.draw()
+        pass
 
 
 class Shell:
@@ -81,6 +75,7 @@ class Shell:
         self.player = game.player
         self.guns = game.guns
         self.exploded = False
+        self.die = False
         self.x_increment = x_inc
         self.y_increment = y_inc
 
@@ -93,11 +88,11 @@ class Shell:
             # take one life
             self.game.explosions.insert(ShellHitExplosion(self.x, self.y))
             self.guns.reset()
-            self.exploded = True
+            self.die = True
             self.player.score.player_hit()
 
         if self.y < 1 or self.x < 0:
-            self.exploded = True
+            self.die = True
 
     def draw(self):
         pyxel.rect(self.x-1, self.y-2, self.x+1, self.y+2, 8)
