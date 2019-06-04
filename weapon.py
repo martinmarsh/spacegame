@@ -1,45 +1,34 @@
-from config import W, H
 import pyxel
 
 
 class Bomb:
 
-    def __init__(self, x, y):
-        self.bomb_x = x
-        self.bomb_width = self.bomb_x + 3
-        self.bomb_height = 6
-        self.bomb_y = y
-        self.bomb_count = 0
-        self.ground_level = 160
+    def __init__(self, game, x, y):
+        self.game = game
+        self.ground = game.ground
+        self.score = game.score
+        self.die = False
+        self.x = x
+        self.width = self.x + 3
+        self.height = 6
+        self.y = y
         self.colour = 3
-        self.bomb_exploded = False
+        self.impact = None
         pyxel.play(0, 0)
 
-    def reset(self):
-        self.bomb_x = 0
-        self.bomb_width = self.bomb_x + 3
-        self.bomb_height = 6
-        self.bomb_y = 0
-        self.bomb_count = 0
-        self.bomb_exploded = False
-
     def draw(self):
-        if self.bomb_exploded:
-            # pyxel.blt(self.bomb_x, self.bomb_y, 0, 16, 0, 16, 16)
-            self.bomb_exploded = False
-        elif self.bomb_x != 0:
-            pyxel.blt(self.bomb_x, self.bomb_y, 0, 8, 0, 8, 8)
+        pyxel.blt(self.x, self.y, 0, 8, 0, 8, 8)
 
     def update(self):
-        if self.bomb_x != 0:
-            self.drop_bomb()
+        self.y = self.y + 3
+        self.impact, obj = self.ground.collision(self.x + 12, self.y + 8)
 
-    def drop_bomb(self):
-        self.bomb_y = self.bomb_y + 3
-        self.bomb_count = 1
-
-    def explode_bomb(self):
-        self.bomb_count = 0
-        self.bomb_exploded = True
-        pyxel.play(0, 1)
-        self.reset()
+        if self.impact:
+            # obj 10 = tank, 11 = gun
+            if obj == 11:
+                self.score.tanks_hit()
+            elif obj == 10:
+                self.score.guns_hit()
+                self.game.guns.reset()
+            self.die = True
+            pyxel.play(0, 1)

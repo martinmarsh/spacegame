@@ -46,7 +46,7 @@ class ObjectPool:
         """
         try:
             self.objects[i].alive = False
-        except IndexError:           # Objects may have been destroyed by reset
+        except IndexError:           #  Objects may have been destroyed by reset
             pass
 
     def update(self):

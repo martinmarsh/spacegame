@@ -85,6 +85,7 @@ class Shell:
         if self.player.player_x <= self.x <= self.player.player_x + 16 and \
                 self.player.player_y <= self.y <= self.player.player_y + 10:
             # take one life
+            pyxel.play(0, 1)
             self.game.explosions.insert(ShellHitExplosion(self.x, self.y))
             self.guns.reset()
             self.game.shells.reset()

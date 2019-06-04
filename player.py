@@ -10,59 +10,44 @@ class Player:
         self.player_x = W/2
         self.player_y = H/3
         self.name = "Chris"
-        self.bomb = None
-        self.bomb_dropped = False
         self.game = game
         self.ground = game.ground
         self.score = game.score
-        self.bomb_collision = self.player_collision = False
+        self.player_collision = False
 
     def reset(self):
         self.player_x = W/2
         self.player_y = H/3
+        self.player_collision = False
 
     def draw(self):
-        if self.player_collision:
-            # Display explosion
-            pyxel.blt(self.player_x, self.player_y, 0, 16, 0, 16, 16)
-            # update player hit count
-            self.score.player_hit()
-            self.reset()
-        else:
-            # Display player
-            pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16, 0)
-        if self.bomb:
-            self.bomb.draw()
+        # Display player
+        pyxel.blt(self.player_x, self.player_y, 0, 32, 0, 16, 16, 0)
 
     def update(self):
         self.player_move()
-        self.player_collision, obj = self.ground.collision(self.player_x, self.player_y)
+        self.player_collision, _ = self.ground.collision(self.player_x, self.player_y)
+        if self.player_collision:
+            # update player hit count
+            self.score.player_hit()
+            pyxel.play(0, 1)
+            self.reset()
 
         if pyxel.btnp(pyxel.KEY_SPACE):
-            self.bomb = Bomb(self.player_x, self.player_y)
-            self.bomb_dropped = True
-
-        if self.bomb_dropped:
-            self.bomb.update()
-
-            self.bomb_collision, obj = self.ground.collision(self.bomb.bomb_x + 12, self.bomb.bomb_y + 8)
-
-            if self.bomb_collision:
-                # obj 10 = tank, 11 = gun
-                if obj == 11:
-                    self.score.tanks_hit()
-                elif obj == 10:
-                    self.score.guns_hit()
-                    self.game.guns.reset()
-
-                self.bomb.explode_bomb()
+            self.game.bombs.insert(Bomb(self.game, self.player_x, self.player_y))
 
     def player_move(self):
         if pyxel.btn(pyxel.KEY_UP):
-            self.player_y = self.player_y - 2
+            self.player_y -= 2
 
         if pyxel.btn(pyxel.KEY_DOWN):
-            self.player_y = self.player_y + 2
+            self.player_y += 2
+
+        if pyxel.btn(pyxel.KEY_LEFT):
+            self.player_x -= 2
+
+        if pyxel.btn(pyxel.KEY_RIGHT):
+            self.player_x += 2
 
     def name_generator(self):
         color = ["Red", "Blue", "Black", "White"]

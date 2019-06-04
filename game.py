@@ -20,7 +20,7 @@ class Game:
         self.player = Player(self)
         self.STATE = "INIT"
         self.guns = Guns(self)
-        self.shells = self.explosions = None
+        self.bombs = self.shells = self.explosions = None
         self.STATE = "PLAY"
         self.reset()
 
@@ -35,6 +35,7 @@ class Game:
         self.guns.reset()
         self.explosions = ObjectPool()
         self.shells = ObjectPool()
+        self.bombs = ObjectPool()
         
     def run(self):
         pyxel.run(self.update, self.draw)
@@ -49,6 +50,7 @@ class Game:
             self.guns.update()
             self.explosions.update()
             self.shells.update()
+            self.bombs.update()
 
     def draw(self):
         pyxel.cls(0)
@@ -61,6 +63,7 @@ class Game:
             self.guns.draw()
             self.explosions.draw()
             self.shells.draw()
+            self.bombs.draw()
         elif self.STATE == "DEAD":
             pyxel.blt(40, H/2 - 50, 1, 0, 0, 255, 86)
             pyxel.text((W/2) - 30, (H/2) + 30, f"Total Score: {self.score.total}", 8)
