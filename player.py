@@ -9,17 +9,22 @@ class Player:
     def __init__(self, game):
         self.x = W / 2
         self.y = H / 3
-        self.max_x = H - 50
+        self.max_x = W - 50
         self.name = "Chris"
         self.game = game
         self.ground = game.ground
         self.score = game.score
+        self.magazine = self.magazine_size = 3
+        self.reload_timer = 120
+        self.reload_counter = 0
         self.collision = False
 
     def reset(self):
         self.x = W / 2
         self.y = H / 3
         self.collision = False
+        self.magazine = self.magazine_size
+        self.reload_counter = self.reload_timer
 
     def draw(self):
         # Display player
@@ -34,8 +39,14 @@ class Player:
             pyxel.play(0, 1)
             self.reset()
 
-        if pyxel.btnp(pyxel.KEY_SPACE):
+        if pyxel.btnp(pyxel.KEY_SPACE) and self.magazine:
             self.game.bombs.insert(Bomb(self.game, self.x, self.y))
+            self.magazine -= 1
+
+        self.reload_counter -= 1
+        if self.reload_counter < 1:
+            self.magazine = self.magazine_size
+            self.reload_counter = self.reload_timer
 
     def move(self):
 
