@@ -1,7 +1,7 @@
 import pyxel
 import os
 from background import Ground
-from object_pool import ObjectPool
+from object_helpers import ObjectPool
 from score import Score
 from shells import Guns
 from player import Player

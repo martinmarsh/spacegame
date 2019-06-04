@@ -1,5 +1,7 @@
 from config import W, H
-from random import randrange
+from object_helpers import ObjectPool, Particle
+from random import randrange, randint as rand, random as randf
+import math
 import pyxel
 
 
@@ -70,9 +72,10 @@ class Ground:
         obj_y = int(max(self.object_mask[pos], self.ground_line[pos]))
         y = int(y)
 
-        if y >= obj_y - 16:
+        if y >= obj_y - 8:
             collision = True
             obj = self.object_list[pos]
+            self.game.explosions.insert(GroundExplosion(x, y))
             if obj > 9:
                 # find start of object to replace with explosion
                 while self.object_list[pos-1] == obj:
@@ -128,3 +131,41 @@ class Ground:
         self.object_mask.append(0)
         self.object_list.append(0)
 
+
+class GroundExplosion:
+
+    def __init__(self, x, y):
+        self.particles = ObjectPool()
+        self.x = x
+        self.y = y
+        self.die = False
+        self.time_to_live = 15
+
+    def update(self):
+        # Update existing particles.
+        self.time_to_live -= 1
+        if self.time_to_live < 0:
+            self.die = True
+        for i, particle in self.particles.each():
+            particle.update()
+            if particle.age >= particle.life:
+                self.particles.kill(i)
+
+        # Create new particles.
+        for _ in range(3):
+            angle = randf() * math.tau
+            speed = randf() * 3
+            self.particles.insert(
+                Particle(
+                    self.x,
+                    self.y,
+                    math.cos(angle) * speed,
+                    math.sin(angle) * speed,
+                    rand(10, 30),
+                    y_vel=-0.3
+                )
+            )
+
+    def draw(self):
+        for _, particle in self.particles.each():
+            particle.draw()

@@ -1,5 +1,5 @@
 from random import randint as rand, random as randf, randrange
-from object_pool import ObjectPool
+from object_helpers import ObjectPool, Particle
 import math
 import pyxel
 
@@ -38,7 +38,6 @@ class Gun:
         self.off_screen = False
         self.fire_period = randrange(90, 240)
         self.time_to_fire = 10
-        self.gun_shells = ObjectPool()
 
     def update(self):
         self.pos -= 1
@@ -88,6 +87,7 @@ class Shell:
             # take one life
             self.game.explosions.insert(ShellHitExplosion(self.x, self.y))
             self.guns.reset()
+            self.game.shells.reset()
             self.die = True
             self.player.score.player_hit()
 
@@ -132,76 +132,5 @@ class ShellHitExplosion:
             )
 
     def draw(self):
-        for _, particle in self.particles.each():
-            particle.draw()
-
-
-class Particle:
-    """
-    Simple dynamic object with position and velocity.
-    Life is how long (in frames) the particle should live for.
-    Age is how old (in frames) the particle is.
-    """
-    def __init__(self, x, y, vx, vy, life):
-        self.x = x
-        self.y = y
-        self.vx = vx
-        self.vy = vy
-        self.life = life
-        self.age = 0
-
-    def update(self):
-        """
-        This function defines the dynamics of the particle.
-        In here you could simulate gravity, or reverse it for a fire or smoke effect.
-        """
-        self.x += self.vx  # Move based on velocity.
-        self.y += self.vy
-        self.vx *= 0.99  # X velocity slowly goes to zero over time.
-        self.vy += 0.2  # Increase Y velocity to simulate gravity.
-
-        if self.age < self.life:
-            self.age += 1
-
-    def draw(self):
-        """
-        You can draw anything in here. I'm using circles, but particles can be sprites, text, et cetera.
-        """
-        colour = 7 - int(3 * self.age / self.life)  # Pick white/grey/dark-grey based on age.
-        pyxel.circ(self.x, self.y, 1, colour)
-
-
-class ParticleExample:
-    def __init__(self):
-        pyxel.init(128, 128)
-
-        self.particles = ObjectPool()
-
-    def run(self):
-        pyxel.run(self.update, self.draw)
-
-    def update(self):
-        # Update existing particles.
-        for i, particle in self.particles.each():
-            particle.update()
-            if particle.age >= particle.life:
-                self.particles.kill(i)
-
-        # Create new particles.
-        for _ in range(3):
-            angle = randf() * math.tau
-            speed = randf() * 3
-            self.particles.insert(
-                Particle(
-                    64,
-                    32,
-                    math.cos(angle) * speed,
-                    math.sin(angle) * speed,
-                    rand(10, 30),
-                )
-            )
-
-    def draw(self):
-        pyxel.cls(0)
         for _, particle in self.particles.each():
             particle.draw()
