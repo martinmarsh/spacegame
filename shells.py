@@ -31,6 +31,7 @@ class Gun:
     def __init__(self, game, pos, x):
         self.x = x
         self.ground = game.ground
+        self.player = game.player
         self.game = game
         self.pos = pos
         self.off_screen = False
@@ -47,7 +48,17 @@ class Gun:
             self.off_screen = True
         elif self.time_to_fire == 0:
             y = self.ground.object_mask[self.pos]
-            self.gun_shells.insert(Shell(self.game, self.x, y))
+            y_inc = 0
+            if self.player.player_x + 20 > self.x > 80:
+                time_to_hit = abs(self.player.player_y - y)
+                x_inc = (self.player.player_x - self.x)/time_to_hit
+                y_inc = -1
+            elif self.player.player_x < self.x:
+                y_inc = -1
+                x_inc = -1
+
+            if y_inc != 0:
+                self.gun_shells.insert(Shell(self.game, self.x, y, x_inc, y_inc))
             self.time_to_fire = self.fire_period
 
         for i, shell in self.gun_shells.each():
@@ -62,19 +73,21 @@ class Gun:
 
 class Shell:
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, x_inc=-0.5, y_inc=-1):
         self.x = x
         self.y = y
         self.player = game.player
         self.guns = game.guns
         self.exploded = False
+        self.x_increment = x_inc
+        self.y_increment = y_inc
 
     def update(self):
-        self.x -= 0.5
-        self.y -= 1
+        self.x += self.x_increment
+        self.y += self.y_increment
 
         if self.player.player_x <= self.x <= self.player.player_x + 16 and \
-                self.player.player_y >= self.y <= self.player.player_y + 16:
+                self.player.player_y <= self.y <= self.player.player_y + 16:
             # take one life
             self.guns.reset()
             self.exploded = True
