@@ -1,4 +1,5 @@
 from random import randint as rand, random as randf, randrange
+from object_pool import ObjectPool
 import math
 import pyxel
 
@@ -43,6 +44,7 @@ class Gun:
         self.pos -= 1
         self.x -= 1
         self.time_to_fire -= 1
+        x_inc = -1
 
         if self.pos < 8:
             self.off_screen = True
@@ -55,7 +57,6 @@ class Gun:
                 y_inc = -1
             elif self.player.player_x < self.x:
                 y_inc = -1
-                x_inc = -1
 
             if y_inc != 0:
                 self.gun_shells.insert(Shell(self.game, self.x, y, x_inc, y_inc))
@@ -76,6 +77,7 @@ class Shell:
     def __init__(self, game, x, y, x_inc=-0.5, y_inc=-1):
         self.x = x
         self.y = y
+        self.game = game
         self.player = game.player
         self.guns = game.guns
         self.exploded = False
@@ -87,11 +89,13 @@ class Shell:
         self.y += self.y_increment
 
         if self.player.player_x <= self.x <= self.player.player_x + 16 and \
-                self.player.player_y <= self.y <= self.player.player_y + 16:
+                self.player.player_y <= self.y <= self.player.player_y + 10:
             # take one life
+            self.game.explosions.insert(ShellHitExplosion(self.x, self.y))
             self.guns.reset()
             self.exploded = True
             self.player.score.player_hit()
+
         if self.y < 1 or self.x < 0:
             self.exploded = True
 
@@ -99,47 +103,42 @@ class Shell:
         pyxel.rect(self.x-1, self.y-2, self.x+1, self.y+2, 8)
 
 
-class ObjectPool:
-    """
-    ObjectPool is a data structure that grows to fit a set of objects.
-    """
-    class Object:
-        """
-        Object is a simple wrapper around a value.
-        """
-        def __init__(self, value):
-            self.value = value
-            self.alive = True
+class ShellHitExplosion:
 
-    def __init__(self):
-        self.objects = []
+    def __init__(self, x, y):
+        self.particles = ObjectPool()
+        self.x = x
+        self.y = y
+        self.die = False
+        self.time_to_live = 15
 
-    def insert(self, value):
-        """
-        Wrap the given value and find a place for it in the list, append if necessary.
-        """
-        new = self.Object(value)
-        for i, obj in enumerate(self.objects):
-            if obj.alive is False:
-                self.objects[i] = new
-                break
-        else:
-            self.objects.append(new)
+    def update(self):
+        # Update existing particles.
+        self.time_to_live -= 1
+        if self.time_to_live < 0:
+            self.die = True
+        for i, particle in self.particles.each():
+            particle.update()
+            if particle.age >= particle.life:
+                self.particles.kill(i)
 
-    def each(self):
-        """
-        Iterate over each object, ignoring inactive ones.
-        Yields the object's ID and the object itself.
-        """
-        for i, obj in enumerate(self.objects):
-            if obj.alive:
-                yield i, obj.value
+        # Create new particles.
+        for _ in range(3):
+            angle = randf() * math.tau
+            speed = randf() * 3
+            self.particles.insert(
+                Particle(
+                    self.x,
+                    self.y,
+                    math.cos(angle) * speed,
+                    math.sin(angle) * speed,
+                    rand(10, 30),
+                )
+            )
 
-    def kill(self, i):
-        """
-        Deactivate an object with the given ID.
-        """
-        self.objects[i].alive = False
+    def draw(self):
+        for _, particle in self.particles.each():
+            particle.draw()
 
 
 class Particle:
