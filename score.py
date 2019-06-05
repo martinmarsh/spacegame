@@ -16,12 +16,15 @@ class Score:
         self.tanks_num_hit = 0
         self.lives_position = 100
         self.game = game
+        self.results = None
+        self.ordered_names = []
 
     def reset(self):
         self.total = 0
         self.player_count = 3
         self.guns_num_hit = 0
         self.tanks_num_hit = 0
+        self.results = None
 
     def update(self):
         pass
@@ -47,18 +50,40 @@ class Score:
     def tanks_hit(self):
         self.total = self.total + TANKS_HIT
 
-    def save(self):
-        # Write scores to file.
-        have_file = True
-        file = "\scores.csv"
+    def list_order(self):
+        if self.results is None:
+            self.read()
+            self.ordered_names = []
+            for key, value in sorted(self.results.items(), reverse=True, key=lambda item: item[1]):
+                self.ordered_names.append(key)
+
+    def read(self):
+        file = "/scores.csv"
         path = os.getcwd() + file
         file_to_open = Path(path)
+        print(file_to_open)
+        self.results = {}
+        count = 0
         if file_to_open.is_file():
-            with open(path) as csvfile:
+            with open(file_to_open) as csvfile:
                 reader = csv.reader(csvfile)
                 for row in reader:
-                    print(row)
+                    self.results[row[0]] = int(row[1])
+                    count += 1
+                    if count > 7:
+                        break
+        return file_to_open
 
-        with open(path, 'w') as csvfile:
+    def save(self):
+        # Write scores to file.
+        file_to_open = self.read()
+
+        if self.results.get(self.game.player.name, None) is not None:
+            self.results[self.game.player.name] = max(self.total, int(self.results[self.game.player.name]))
+        else:
+            self.results[self.game.player.name] = self.total
+
+        with open(file_to_open, 'w') as csvfile:
             my_writer = csv.writer(csvfile)
-            my_writer.writerow([self.game.player.name, self.total])
+            for name, score in self.results.items():
+                my_writer.writerow([name, score])

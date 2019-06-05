@@ -65,6 +65,12 @@ class Player:
     def name_generator(self):
         color = ["Red", "Blue", "Black", "White"]
         tool = ["Hammer", "Drill", "Cutter", "Knife"]
-        random_number1 = random.randrange(0, len(color))
-        random_number2 = random.randrange(0, len(tool))
-        self.name = color[random_number1] + " " + tool[random_number2]
+        searching = True
+        while searching:
+            random_number1 = random.randrange(0, len(color))
+            random_number2 = random.randrange(0, len(tool))
+            self.name = color[random_number1] + " " + tool[random_number2]
+            if self.name not in self.score.results.keys():
+                searching = False
+
+
