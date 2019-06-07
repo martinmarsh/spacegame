@@ -1,5 +1,5 @@
-from config import H, W, GAMEPAD_1_A, GAMEPAD_1_UP, GAMEPAD_1_LEFT, GAMEPAD_1_DOWN, GAMEPAD_1_RIGHT,\
-    GAMEPAD_1_L, GAMEPAD_1_R
+from config import H, W, GAMEPAD_1_A, GAMEPAD_1_B, GAMEPAD_1_UP, GAMEPAD_1_LEFT, GAMEPAD_1_DOWN, GAMEPAD_1_RIGHT,\
+    GAMEPAD_1_L, GAMEPAD_1_R, GAMEPAD_1_L2, GAMEPAD_1_R2
 
 from weapon import Bomb
 import pyxel
@@ -41,7 +41,7 @@ class Player:
             pyxel.play(0, 1)
             self.reset()
 
-        if (pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(GAMEPAD_1_A)) and self.magazine:
+        if (pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(GAMEPAD_1_A) or pyxel.btn(GAMEPAD_1_B)) and self.magazine:
             self.game.bombs.insert(Bomb(self.game, self.x, self.y))
             self.magazine -= 1
 
@@ -52,10 +52,11 @@ class Player:
 
     def move(self):
 
-        if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(GAMEPAD_1_UP)) and self.y > 20:
+        if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(GAMEPAD_1_UP) or pyxel.btn(GAMEPAD_1_R2)) and self.y > 20:
             self.y -= 2
 
-        if pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(GAMEPAD_1_DOWN):      # always hits ground or below before reaching H
+        if pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(GAMEPAD_1_DOWN) or pyxel.btn(GAMEPAD_1_L2):
+            # always hits ground or below before reaching H
             self.y += 2
 
         if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(GAMEPAD_1_LEFT) or pyxel.btn(GAMEPAD_1_L)) and self.x > 50:
@@ -72,7 +73,7 @@ class Player:
             random_number1 = random.randrange(0, len(color))
             random_number2 = random.randrange(0, len(tool))
             self.name = color[random_number1] + " " + tool[random_number2]
-            if self.name not in self.score.results.keys():
+            if self.name not in self.score.ordered_names:
                 searching = False
 
 

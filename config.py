@@ -7,11 +7,13 @@ GAMEPAD_1_B = 3001
 GAMEPAD_1_X = 3003
 GAMEPAD_1_Y = 3000
 
-# These keys are on the top of the controller and marked l and R
+# These keys are on the top of the controller and marked l and R upper buttons
 GAMEPAD_1_L = 3004
 GAMEPAD_1_R = 3005
 
-# 2 other keys on the top are marked l2 and r2 not yet found
+# 2 other keys on the top are marked l2 and r2 lower buttons
+GAMEPAD_1_L2 = 3006
+GAMEPAD_1_R2 = 3007
 
 # These keys are marked the 4 direction key pad:
 GAMEPAD_1_UP = 3014

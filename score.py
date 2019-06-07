@@ -53,9 +53,16 @@ class Score:
     def list_order(self):
         if self.results is None:
             self.read()
-            self.ordered_names = []
-            for key, value in sorted(self.results.items(), reverse=True, key=lambda item: item[1]):
-                self.ordered_names.append(key)
+        self._make_ordered_names()
+
+    def _make_ordered_names(self):
+        self.ordered_names = []
+        count = 0
+        for key, value in sorted(self.results.items(), reverse=True, key=lambda item: item[1]):
+            self.ordered_names.append(key)
+            count += 1
+            if count > 7:
+                break
 
     def read(self):
         file = "/scores.csv"
@@ -63,15 +70,11 @@ class Score:
         file_to_open = Path(path)
         print(file_to_open)
         self.results = {}
-        count = 0
         if file_to_open.is_file():
             with open(file_to_open) as csvfile:
                 reader = csv.reader(csvfile)
                 for row in reader:
                     self.results[row[0]] = int(row[1])
-                    count += 1
-                    if count > 7:
-                        break
         return file_to_open
 
     def save(self):
@@ -82,8 +85,11 @@ class Score:
             self.results[self.game.player.name] = max(self.total, int(self.results[self.game.player.name]))
         else:
             self.results[self.game.player.name] = self.total
+            print(self.results)
 
+        self._make_ordered_names()
+        print(self.ordered_names)
         with open(file_to_open, 'w') as csvfile:
             my_writer = csv.writer(csvfile)
-            for name, score in self.results.items():
-                my_writer.writerow([name, score])
+            for name in self.ordered_names:
+                my_writer.writerow([name, self.results[name]])

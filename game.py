@@ -45,7 +45,7 @@ class Game:
         if self.STATE == "INIT":
             self.score.list_order()
             name = False
-            if pyxel.btnp(pyxel.KEY_N) or pyxel.btn(GAMEPAD_1_X):
+            if pyxel.btnp(pyxel.KEY_X) or pyxel.btn(GAMEPAD_1_X):
                 self.player.name_generator()
                 self.STATE = "PLAY"
             else:
@@ -121,7 +121,7 @@ class Game:
             count += 1
             y += 10
         pyxel.text((W/2) - 80, (H/2) + 30, "Select the number next to your alias to replay or", 8)
-        pyxel.text((W / 2) - 80, (H / 2) + 40, "To play as new user, hit letter 'N", 8)
+        pyxel.text((W / 2) - 80, (H / 2) + 40, "To play as new user, hit 'X' ", 8)
 
 
 if __name__ == '__main__':
