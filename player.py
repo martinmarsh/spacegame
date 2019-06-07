@@ -1,4 +1,6 @@
-from config import W, H
+from config import H, W, GAMEPAD_1_A, GAMEPAD_1_UP, GAMEPAD_1_LEFT, GAMEPAD_1_DOWN, GAMEPAD_1_RIGHT,\
+    GAMEPAD_1_L, GAMEPAD_1_R
+
 from weapon import Bomb
 import pyxel
 import random
@@ -39,7 +41,7 @@ class Player:
             pyxel.play(0, 1)
             self.reset()
 
-        if pyxel.btnp(pyxel.KEY_SPACE) and self.magazine:
+        if (pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(GAMEPAD_1_A)) and self.magazine:
             self.game.bombs.insert(Bomb(self.game, self.x, self.y))
             self.magazine -= 1
 
@@ -50,16 +52,16 @@ class Player:
 
     def move(self):
 
-        if pyxel.btn(pyxel.KEY_UP) and self.y > 20:
+        if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(GAMEPAD_1_UP)) and self.y > 20:
             self.y -= 2
 
-        if pyxel.btn(pyxel.KEY_DOWN):      # always hits ground or below before reaching H
+        if pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(GAMEPAD_1_DOWN):      # always hits ground or below before reaching H
             self.y += 2
 
-        if pyxel.btn(pyxel.KEY_LEFT) and self.x > 50:
+        if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(GAMEPAD_1_LEFT) or pyxel.btn(GAMEPAD_1_L)) and self.x > 50:
             self.x -= 2
 
-        if pyxel.btn(pyxel.KEY_RIGHT) and self.x < self.max_x:
+        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(GAMEPAD_1_RIGHT) or pyxel.btn(GAMEPAD_1_R)) and self.x < self.max_x:
             self.x += 2
 
     def name_generator(self):

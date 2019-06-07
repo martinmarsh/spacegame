@@ -5,7 +5,8 @@ from object_helpers import ObjectPool
 from score import Score
 from shells import Guns
 from player import Player
-from config import W, H
+from config import W, H, GAMEPAD_1_A, GAMEPAD_1_B, GAMEPAD_1_X, GAMEPAD_1_Y
+
 
 ASSET_PATH = f"{os.getcwd()}/assets.pyxel"
 
@@ -44,7 +45,7 @@ class Game:
         if self.STATE == "INIT":
             self.score.list_order()
             name = False
-            if pyxel.btnp(pyxel.KEY_N):
+            if pyxel.btnp(pyxel.KEY_N) or pyxel.btn(GAMEPAD_1_X):
                 self.player.name_generator()
                 self.STATE = "PLAY"
             else:
@@ -80,12 +81,13 @@ class Game:
             self.shells.update()
             self.bombs.update()
         elif self.STATE == "DEAD":
-            if pyxel.btn(pyxel.KEY_0):
+            # We use X on gamepad and not A which is for bombs to prevent accidental replay
+            if pyxel.btn(pyxel.KEY_X) or pyxel.btn(GAMEPAD_1_X):
                 name = self.player.name
                 self.reset()
                 self.player.name = name
                 self.STATE = "PLAY"
-            elif pyxel.btn(pyxel.KEY_1):
+            elif pyxel.btn(pyxel.KEY_Y) or pyxel.btn(GAMEPAD_1_Y):
                 self.reset()
                 self.STATE = "INIT"
 
@@ -104,8 +106,8 @@ class Game:
         elif self.STATE == "DEAD":
             pyxel.blt(40, H/2 - 50, 1, 0, 0, 255, 86)
             pyxel.text((W/2) - 30, (H/2) + 30, f"Total Score: {self.score.total}", 8)
-            pyxel.text((W / 2) - 30, (H / 2) + 60, f"Press 0 to try again as  {self.player.name}", 8)
-            pyxel.text((W / 2) - 30, (H / 2) + 70, f"Press 1 for list of players", 8)
+            pyxel.text((W / 2) - 30, (H / 2) + 60, f"Press X to try again as  {self.player.name}", 8)
+            pyxel.text((W / 2) - 30, (H / 2) + 70, f"Press Y for list of players", 8)
 
     def initialise(self):
         self.score.list_order()

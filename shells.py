@@ -120,7 +120,7 @@ class ShellHitExplosion:
         # Create new particles.
         for _ in range(3):
             angle = randf() * math.tau
-            speed = randf() * 3
+            speed = randf() * 0.5
             self.particles.insert(
                 Particle(
                     self.x,
