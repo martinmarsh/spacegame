@@ -59,7 +59,7 @@ class PyxelObjectPool(ObjectPool):
 
       This class extends base object pool by having methods to process draw and update
         Classes inserted into a pool instantiated from this case must have:
-            1) a property "self.die" set to true (false to commit suicide and be removed from the pool)
+            1) a property "self.die" set to false (true to commit suicide and be removed from the pool)
             2) Draw and Update methods
 
     """
@@ -93,6 +93,7 @@ class Particle:
         self.y_vel = y_vel
         self.life = life
         self.age = 0
+        self.die = False
 
     def update(self):
         """
@@ -101,11 +102,13 @@ class Particle:
         """
         self.x += self.vx  # Move based on velocity.
         self.y += self.vy
-        self.vx *= self.x_vel  # X velocity slowly goes to zero over time.
-        self.vy += self.y_vel  # Increase Y velocity to simulate gravity.
+        self.vx *= self.x_vel  # <1 then X velocity slowly goes to zero over time .
+        self.vy += self.y_vel  # <0 Increase Y velocity to simulate gravity >0 for upward movement
 
         if self.age < self.life:
             self.age += 1
+        else:
+            self.die = True
 
     def draw(self):
         """

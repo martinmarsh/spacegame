@@ -1,5 +1,5 @@
 from config import W, H
-from object_helpers import ObjectPool, Particle
+from object_helpers import PyxelObjectPool, Particle
 from random import randrange, randint as rand, random as randf
 import math
 import pyxel
@@ -135,37 +135,36 @@ class Ground:
 class GroundExplosion:
 
     def __init__(self, x, y):
-        self.particles = ObjectPool()
+        self.particles = PyxelObjectPool()
         self.x = x
         self.y = y
         self.die = False
-        self.time_to_live = 15
+        self.time_to_live = 30
 
     def update(self):
         # Update existing particles.
+        self.x -= 1
         self.time_to_live -= 1
         if self.time_to_live < 0:
             self.die = True
-        for i, particle in self.particles.each():
-            particle.update()
-            if particle.age >= particle.life:
-                self.particles.kill(i)
+        self.particles.update()
 
         # Create new particles.
         for _ in range(3):
             angle = randf() * math.tau
-            speed = randf() * 3
+            speed = randf() * 4
             self.particles.insert(
                 Particle(
                     self.x,
                     self.y,
-                    math.cos(angle) * speed,
+                    math.cos(angle) * speed - 1,
                     math.sin(angle) * speed,
-                    rand(10, 30),
-                    y_vel=-0.3
+                    rand(5, 20),
+                    y_vel=-0.2,
+                    x_vel=0.99
+
                 )
             )
 
     def draw(self):
-        for _, particle in self.particles.each():
-            particle.draw()
+        self.particles.draw()

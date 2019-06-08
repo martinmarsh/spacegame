@@ -1,5 +1,5 @@
 from random import randint as rand, random as randf, randrange
-from object_helpers import ObjectPool, Particle
+from object_helpers import PyxelObjectPool, Particle
 import math
 import pyxel
 
@@ -12,20 +12,16 @@ class Guns:
         self.guns = None
 
     def reset(self):
-        self.guns = ObjectPool()
+        self.guns = PyxelObjectPool()
 
     def create_gun(self, pos, x):
         self.guns.insert(Gun(self.game, pos+1, x))
 
     def update(self):
-        for i, gun in self.guns.each():
-            gun.update()
-            if gun.off_screen:
-                self.guns.kill(i)
+        self.guns.update()
 
     def draw(self):
-        for _, gun in self.guns.each():
-            gun.draw()
+        self.guns.draw()
 
 
 class Gun:
@@ -35,9 +31,9 @@ class Gun:
         self.player = game.player
         self.game = game
         self.pos = pos
-        self.off_screen = False
         self.fire_period = randrange(90, 240)
         self.time_to_fire = 10
+        self.die = False
 
     def update(self):
         self.pos -= 1
@@ -46,7 +42,7 @@ class Gun:
         x_inc = -1
 
         if self.pos < 8:
-            self.off_screen = True
+            self.die = True
         elif self.time_to_fire == 0:
             y = self.ground.object_mask[self.pos]
             y_inc = 0
@@ -101,26 +97,23 @@ class Shell:
 class ShellHitExplosion:
 
     def __init__(self, x, y):
-        self.particles = ObjectPool()
+        self.particles = PyxelObjectPool()
         self.x = x
         self.y = y
         self.die = False
-        self.time_to_live = 15
+        self.time_to_live = 20
 
     def update(self):
         # Update existing particles.
         self.time_to_live -= 1
         if self.time_to_live < 0:
             self.die = True
-        for i, particle in self.particles.each():
-            particle.update()
-            if particle.age >= particle.life:
-                self.particles.kill(i)
+        self.particles.update()
 
         # Create new particles.
         for _ in range(3):
             angle = randf() * math.tau
-            speed = randf() * 0.5
+            speed = randf() * 4
             self.particles.insert(
                 Particle(
                     self.x,
@@ -128,9 +121,9 @@ class ShellHitExplosion:
                     math.cos(angle) * speed,
                     math.sin(angle) * speed,
                     rand(10, 30),
+
                 )
             )
 
     def draw(self):
-        for _, particle in self.particles.each():
-            particle.draw()
+        self.particles.draw()
