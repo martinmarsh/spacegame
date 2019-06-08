@@ -46,8 +46,26 @@ class ObjectPool:
         """
         try:
             self.objects[i].alive = False
-        except IndexError:           #  Objects may have been destroyed by reset
+        except IndexError:                   # Need exception here as Objects may have been destroyed by reset
             pass
+
+
+class PyxelObjectPool(ObjectPool):
+    """ This class makes it easier to use Pools of objects in Pyxel. Simply insert an object
+      into an instantiated Pool and let objects update and draw methods do the positioning, collision, rendering and to
+      end its life by setting die.
+      There is no need to refer to the Pool or iterate over objects in the Pool. Simply call the pools
+      update and draw methods from the highest level object you need the pool to exist for.
+
+      This class extends base object pool by having methods to process draw and update
+        Classes inserted into a pool instantiated from this case must have:
+            1) a property "self.die" set to true (false to commit suicide and be removed from the pool)
+            2) Draw and Update methods
+
+    """
+
+    def __init__(self):
+        super().__init__()
 
     def update(self):
         for i, item in self.each():

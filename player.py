@@ -51,19 +51,26 @@ class Player:
             self.reload_counter = self.reload_timer
 
     def move(self):
+        if self.game.joys:
+            self.x += self.game.joy_x
+            self.y += self.game.joy_y
 
-        if (pyxel.btn(pyxel.KEY_UP) or pyxel.btn(GAMEPAD_1_UP) or pyxel.btn(GAMEPAD_1_R2)) and self.y > 20:
+        if pyxel.btn(pyxel.KEY_UP) or pyxel.btn(GAMEPAD_1_UP) or pyxel.btn(GAMEPAD_1_R2):
             self.y -= 2
 
         if pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(GAMEPAD_1_DOWN) or pyxel.btn(GAMEPAD_1_L2):
-            # always hits ground or below before reaching H
             self.y += 2
 
-        if (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(GAMEPAD_1_LEFT) or pyxel.btn(GAMEPAD_1_L)) and self.x > 50:
+        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(GAMEPAD_1_LEFT) or pyxel.btn(GAMEPAD_1_L):
             self.x -= 2
 
-        if (pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(GAMEPAD_1_RIGHT) or pyxel.btn(GAMEPAD_1_R)) and self.x < self.max_x:
+        if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(GAMEPAD_1_RIGHT) or pyxel.btn(GAMEPAD_1_R):
             self.x += 2
+
+        self.y = max(self.y, 15)
+        # always hits ground or below before reaching max y
+        self.x = min(self.x, self.max_x)
+        self.x = max(self.x, 50)
 
     def name_generator(self):
         color = ["Red", "Blue", "Black", "White"]

@@ -1,12 +1,12 @@
 import pyxel
 import os
 from background import Ground
-from object_helpers import ObjectPool
+from object_helpers import PyxelObjectPool
 from score import Score
 from shells import Guns
 from player import Player
-from config import W, H, GAMEPAD_1_A, GAMEPAD_1_B, GAMEPAD_1_X, GAMEPAD_1_Y
-
+from config import W, H, GAMEPAD_1_X, GAMEPAD_1_Y
+import glfw
 
 ASSET_PATH = f"{os.getcwd()}/assets.pyxel"
 
@@ -24,6 +24,9 @@ class Game:
         self.bombs = self.shells = self.explosions = None
         self.STATE = "PLAY"
         self.reset()
+        self.joys = 0
+        self.joy_x = 0
+        self.joy_y = 0
 
     def reset(self):
         """
@@ -34,14 +37,25 @@ class Game:
         self.guns.reset()
         self.STATE = "INIT"
         self.guns.reset()
-        self.explosions = ObjectPool()
-        self.shells = ObjectPool()
-        self.bombs = ObjectPool()
+        self.explosions = PyxelObjectPool()
+        self.shells = PyxelObjectPool()
+        self.bombs = PyxelObjectPool()
         
     def run(self):
+        self.joys = 0
+        for joy in range(glfw.JOYSTICK_1, glfw.JOYSTICK_LAST):
+            if glfw.joystick_present(joy):
+                self.joys += 1
+        print("number of joysticks =", self.joys)
         pyxel.run(self.update, self.draw)
 
     def update(self):
+
+        if self.joys:
+            js, c = glfw.get_joystick_axes(glfw.JOYSTICK_1)
+            self.joy_x = js[0] * 2
+            self.joy_y = js[1] * 2
+
         if self.STATE == "INIT":
             self.score.list_order()
             name = False
