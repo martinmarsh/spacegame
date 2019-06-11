@@ -1,6 +1,87 @@
 import pyxel
 
 
+class ObjectFixedList:
+    """
+     ObjectFixedList is a circular data structure of fix length where objects are replaced at the current position
+
+
+     """
+
+    class Object:
+        """
+        Object is a simple wrapper around a value.
+        """
+        def __init__(self, value):
+            self.value = value
+
+    def __init__(self, length):
+        self.objects = []
+        self.length = length
+        self.origin = 0
+
+        for i in range(0, length):
+            new = self.Object(None)
+            self.objects.append(new)
+
+    def list_pos(self, i):
+        x = int(i) + self.origin
+        if x >= self.length:
+            x -= self.length
+        return x
+
+    def get(self, i):
+        x = self.list_pos(i)
+        return self.objects[x].value
+
+    def substitute(self, i,  value):
+        x = self.list_pos(i)
+        self.objects[x].value = value
+
+    def each(self, start, end):
+        """
+        Iterate over each object
+        Yields the object's ID and the object itself.
+        """
+        x = start + self.origin
+        for i in range(start, end + 1):
+            if x >= self.length:
+                x -= self.length
+            yield i, self.objects[x].value
+            x += 1
+
+    def shift_left(self):
+        self.origin += 1
+        if self.origin >= self.length:
+            self.origin -= self.length
+
+
+class PyxelObjectFixedList(ObjectFixedList):
+
+    def __init__(self, pixel_length, pixel_lead_in, call_back):
+        self.length = (pixel_length + 2 * pixel_lead_in) // 16
+        self.pixel_lead_in = pixel_lead_in
+        self.count = 0
+        self.call_back = call_back
+        super().__init__(self.length)
+
+    def all(self):
+        return self.each(0, self.length)
+
+    def update(self):
+        if self.count > 15:
+            self.count = -1
+            self.shift_left()
+            self.call_back()
+        self.count += 1
+        for i, obj in self.all():
+            obj.update()
+
+    def draw(self):
+        for i, obj in self.all():
+            obj.draw()
+
+
 class ObjectPool:
     """
     ObjectPool is a data structure that grows to fit a set of objects.

@@ -21,6 +21,10 @@ GAMEPAD_1_RIGHT = 3015
 GAMEPAD_1_DOWN = 3016
 GAMEPAD_1_LEFT = 3017
 
+LAND = 1
+TANK = 2
+GUN = 3
+
 pyxel.constants.APP_SCREEN_MAX_SIZE = 320
 W = pyxel.constants.APP_SCREEN_MAX_SIZE
 H = pyxel.constants.APP_SCREEN_MAX_SIZE*3//4

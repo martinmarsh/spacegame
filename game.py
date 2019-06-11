@@ -1,6 +1,6 @@
 import pyxel
 import os
-from background import Ground
+from ground import Ground
 from object_helpers import PyxelObjectPool
 from score import Score
 from shells import Guns
