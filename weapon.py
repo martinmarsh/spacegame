@@ -1,3 +1,4 @@
+from config import TANK, GUN
 from object_helpers import PyxelObjectPool, Particle
 from random import randint as rand, random as randf
 import math
@@ -27,12 +28,12 @@ class Bomb:
         self.impact, obj = self.ground.collision(self.x-4, self.y-4)
 
         if self.impact:
-            # obj 10 = tank, 11 = gun
-            if obj == 11:
+            if obj.name == TANK:
                 self.score.tanks_hit()
-            elif obj == 10:
+                obj.burn()
+            elif obj.name == GUN:
                 self.score.guns_hit()
-                self.game.guns.reset()
+                obj.burn()
             self.die = True
             self.game.explosions.insert(BombExplosion(self.x-4, self.y-4))
             pyxel.play(0, 1)

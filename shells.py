@@ -4,63 +4,6 @@ import math
 import pyxel
 
 
-class Guns:
-
-    def __init__(self, game):
-        self.game = game
-        self.ground = game.ground
-        self.guns = None
-
-    def reset(self):
-        self.guns = PyxelObjectPool()
-
-    def create_gun(self, pos, x):
-        self.guns.insert(Gun(self.game, pos+1, x))
-
-    def update(self):
-        self.guns.update()
-
-    def draw(self):
-        self.guns.draw()
-
-
-class Gun:
-    def __init__(self, game, pos, x):
-        self.x = x
-        self.ground = game.ground
-        self.player = game.player
-        self.game = game
-        self.pos = pos
-        self.fire_period = randrange(90, 240)
-        self.time_to_fire = 10
-        self.die = False
-
-    def update(self):
-        self.pos -= 1
-        self.x -= 1
-        self.time_to_fire -= 1
-        x_inc = -1
-
-        if self.pos < 8:
-            self.die = True
-        elif self.time_to_fire == 0:
-            y = self.ground.object_mask[self.pos]
-            y_inc = 0
-            if self.player.x + 20 > self.x > 80:
-                time_to_hit = abs(self.player.y - y)
-                x_inc = (self.player.x - self.x)/time_to_hit
-                y_inc = -1
-            elif self.player.x < self.x:
-                y_inc = -1
-
-            if y_inc != 0:
-                self.game.shells.insert(Shell(self.game, self.x, y, x_inc, y_inc))
-            self.time_to_fire = self.fire_period
-
-    def draw(self):
-        pass
-
-
 class Shell:
 
     def __init__(self, game, x, y, x_inc=-0.5, y_inc=-1):
@@ -68,7 +11,6 @@ class Shell:
         self.y = y
         self.game = game
         self.player = game.player
-        self.guns = game.guns
         self.exploded = False
         self.die = False
         self.x_increment = x_inc
@@ -82,7 +24,6 @@ class Shell:
             # take one life
             pyxel.play(0, 1)
             self.game.explosions.insert(ShellHitExplosion(self.x, self.y))
-            self.guns.reset()
             self.game.shells.reset()
             self.die = True
             self.player.score.player_hit()

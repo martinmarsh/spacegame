@@ -3,7 +3,6 @@ import os
 from ground import Ground
 from object_helpers import PyxelObjectPool
 from score import Score
-from shells import Guns
 from player import Player
 from config import W, H, GAMEPAD_1_X, GAMEPAD_1_Y
 import glfw
@@ -20,7 +19,6 @@ class Game:
         self.score = Score(self)
         self.player = Player(self)
         self.STATE = "INIT"
-        self.guns = Guns(self)
         self.bombs = self.shells = self.explosions = None
         self.STATE = "PLAY"
         self.reset()
@@ -34,9 +32,7 @@ class Game:
         """
         self.ground.reset()
         self.score.reset()
-        self.guns.reset()
         self.STATE = "INIT"
-        self.guns.reset()
         self.explosions = PyxelObjectPool()
         self.shells = PyxelObjectPool()
         self.bombs = PyxelObjectPool()
@@ -90,7 +86,6 @@ class Game:
             self.ground.update()
             self.player.update()
             self.score.update()
-            self.guns.update()
             self.explosions.update()
             self.shells.update()
             self.bombs.update()
@@ -113,7 +108,6 @@ class Game:
             self.ground.draw()
             self.player.draw()
             self.score.draw()
-            self.guns.draw()
             self.explosions.draw()
             self.shells.draw()
             self.bombs.draw()
