@@ -98,7 +98,7 @@ class Gun(BaseObject):
         self.time_to_fire -= 1
         x_inc = -1
 
-        if self.time_to_fire == 0:
+        if self.time_to_fire == 0 and not self.burning:
             y_inc = 0
             if self.player.x + 20 > self.x > 80:
                 time_to_hit = abs(self.player.y - self.y)
