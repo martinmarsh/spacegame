@@ -138,7 +138,7 @@ class Ground:
     def __init__(self, game):
         self.y_base = H * 2 // 3
         self.lead_in = 32
-        self.ground_objs = PyxelObjectFixedList(W, self.lead_in, self.add)
+        self.ground_objs = None
         self.game = game
         self.ground_colour = 5
         self.high_colour = 7
@@ -149,6 +149,8 @@ class Ground:
     def reset(self):
         x = 0
         y = H
+        self.ground_objs = PyxelObjectFixedList(W, self.lead_in, self.add)
+
         for i, obj in self.ground_objs.all():
             y2 = y - 2
             self.ground_objs.substitute(i, Land(x, self.y_base, self.y_base, self.game,
