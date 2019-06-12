@@ -20,14 +20,14 @@ class ObjectFixedList:
         self.length = length
         self.origin = 0
 
-        for i in range(0, length):
+        for i in range(0, length+1):
             new = self.Object(None)
             self.objects.append(new)
 
     def list_pos(self, i):
         x = int(i) + self.origin
-        if x >= self.length:
-            x -= self.length
+        if x > self.length:
+            x -= self.length + 1
         return x
 
     def get(self, i):
@@ -45,23 +45,23 @@ class ObjectFixedList:
         """
         x = start + self.origin
         for i in range(start, end + 1):
-            if x >= self.length:
-                x -= self.length
+            if x > self.length:
+                x -= self.length + 1
             yield i, self.objects[x].value
             x += 1
 
     def shift_left(self):
         self.origin += 1
-        if self.origin >= self.length:
-            self.origin -= self.length
+        if self.origin > self.length:
+            self.origin -= self.length + 1
 
 
 class PyxelObjectFixedList(ObjectFixedList):
 
     def __init__(self, pixel_length, pixel_lead_in, call_back):
-        self.length = (pixel_length + 2 * pixel_lead_in) // 16
+        self.length = (pixel_length + pixel_lead_in) // 16
         self.pixel_lead_in = pixel_lead_in
-        self.count = 0
+        self.pixel_shift = -1
         self.call_back = call_back
         super().__init__(self.length)
 
@@ -69,11 +69,11 @@ class PyxelObjectFixedList(ObjectFixedList):
         return self.each(0, self.length)
 
     def update(self):
-        if self.count > 15:
-            self.count = -1
+        self.pixel_shift += 1
+        if self.pixel_shift > 15:
+            self.pixel_shift = 0
             self.shift_left()
             self.call_back()
-        self.count += 1
         for i, obj in self.all():
             obj.update()
 

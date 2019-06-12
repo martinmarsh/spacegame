@@ -136,7 +136,8 @@ class Ground:
 
     def __init__(self, game):
         self.y_base = H * 2 // 3
-        self.ground_objs = PyxelObjectFixedList(W, 32, self.add)
+        self.lead_in = 32
+        self.ground_objs = PyxelObjectFixedList(W, self.lead_in, self.add)
         self.game = game
         self.ground_colour = 5
         self.high_colour = 7
@@ -144,10 +145,9 @@ class Ground:
         self.gradient = 0
 
     def reset(self):
-        x = -32
+        x = 0
         y = H
         for i, obj in self.ground_objs.all():
-            print(i, x)
             y2 = y - 2
             self.ground_objs.substitute(i, Land(x, self.y_base, self.y_base, self.game,
                                                 self.ground_colour, self.high_colour))
@@ -183,8 +183,8 @@ class Ground:
 
     def collision(self, x, y):
         # find ground object with same x position
-        x = x - 4
-        obj_id = (x + self.ground_objs.pixel_lead_in) // 16 + 3
+        x = x -1
+        obj_id = (x +  self.ground_objs.pixel_shift) // 16
         obj = self.ground_objs.get(obj_id)
         x_rel = x - obj.x
 
@@ -192,6 +192,7 @@ class Ground:
             obj = self.ground_objs.get(obj_id + 1)
             print('greater')
         elif x_rel < 0:
+            print('lesser', x_rel, self.ground_objs.pixel_shift)
             obj = self.ground_objs.get(obj_id - 1)
 
         collision = obj.collision(x, y)
