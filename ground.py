@@ -3,6 +3,7 @@ from object_helpers import PyxelObjectFixedList
 from random import randrange
 from shells import Shell
 import pyxel
+import math
 
 
 class BaseObject:
@@ -23,7 +24,7 @@ class BaseObject:
         self.burning = False
 
     def get_last_y(self):
-        return self.y
+        return self.y + 16
 
     def update(self):
         self.x -= 1
@@ -73,7 +74,7 @@ class Tanks(BaseObject):
         if self.burning:
             pyxel.blt(self.x, self.y, 0, 16, 0, 16, 16)
         else:
-             pyxel.blt(self.x, self.y, 0, 48, 0, 16, 16)
+            pyxel.blt(self.x, self.y, 0, 48, 0, 16, 16)
         super().draw()
 
 
@@ -143,6 +144,7 @@ class Ground:
         self.high_colour = 7
         self.count = 0
         self.gradient = 0
+        self.jitter = 0
 
     def reset(self):
         x = 0
@@ -166,11 +168,15 @@ class Ground:
             else:
                 self.ground_objs.substitute(i, Gun(W + 32, y_start, self.game, self.ground_colour, self.high_colour))
         else:
-            y_end = self.y_base + randrange(-30, 31)
+            if self.ground_objs.origin == 0:
+                self.jitter = randrange(-5, 6)
+            offset = math.cos(pyxel.frame_count/100 - self.jitter * 3) * 20
+            offset += math.sin(pyxel.frame_count/20 + self.jitter) * 20
+            y_end = self.y_base + randrange(-10, 11) + offset
             if y_end < H//2:
                 self.gradient += randrange(-5, 10)
             elif y_end > H - 25:
-                self.gradient += randrange(10, 5)
+                self.gradient += randrange(-10, 5)
             y_end += self.gradient
             self.ground_objs.substitute(i, Land(W + 32, y_start, y_end, self.game,
                                                 self.ground_colour, self.high_colour))
@@ -183,8 +189,8 @@ class Ground:
 
     def collision(self, x, y):
         # find ground object with same x position
-        x = x -1
-        obj_id = (x +  self.ground_objs.pixel_shift) // 16
+        x = x - 1
+        obj_id = (x + self.ground_objs.pixel_shift) // 16
         obj = self.ground_objs.get(obj_id)
         x_rel = x - obj.x
 
@@ -192,7 +198,7 @@ class Ground:
             obj = self.ground_objs.get(obj_id + 1)
             print('greater')
         elif x_rel < 0:
-            print('lesser', x_rel, self.ground_objs.pixel_shift)
+            print('lesser', x_rel)
             obj = self.ground_objs.get(obj_id - 1)
 
         collision = obj.collision(x, y)
