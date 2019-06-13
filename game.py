@@ -4,7 +4,7 @@ from ground import Ground
 from object_helpers import PyxelObjectPool
 from score import Score
 from player import Player
-from config import W, H, GAMEPAD_1_X, GAMEPAD_1_Y
+from config import W, H, GAMEPAD_1_X, GAMEPAD_1_Y, GAMEPAD_1_UP, GAMEPAD_1_DOWN, GAMEPAD_1_L2, GAMEPAD_1_R2
 import glfw
 
 ASSET_PATH = f"{os.getcwd()}/assets.pyxel"
@@ -25,6 +25,7 @@ class Game:
         self.joys = 0
         self.joy_x = 0
         self.joy_y = 0
+        self.select_name = 0
 
     def reset(self):
         """
@@ -56,32 +57,22 @@ class Game:
         if self.STATE == "INIT":
             self.score.list_order()
             name = False
+            num = len(self.score.ordered_names) + 1
             if pyxel.btnp(pyxel.KEY_X) or pyxel.btn(GAMEPAD_1_X):
-                self.player.name_generator()
+                if self.select_name == num:
+                    self.player.name_generator()
+                else:
+                    self.player.name = self.score.ordered_names[self.select_name - 1]
                 self.STATE = "PLAY"
             else:
-                try:
-                    if pyxel.btnp(pyxel.KEY_1):
-                        name = self.score.ordered_names[0]
-                    elif pyxel.btnp(pyxel.KEY_2):
-                        name = self.score.ordered_names[1]
-                    elif pyxel.btnp(pyxel.KEY_3):
-                        name = self.score.ordered_names[2]
-                    elif pyxel.btnp(pyxel.KEY_4):
-                        name = self.score.ordered_names[3]
-                    elif pyxel.btnp(pyxel.KEY_5):
-                        name = self.score.ordered_names[4]
-                    elif pyxel.btnp(pyxel.KEY_6):
-                        name = self.score.ordered_names[5]
-                    elif pyxel.btnp(pyxel.KEY_7):
-                        name = self.score.ordered_names[6]
-                    elif pyxel.btnp(pyxel.KEY_8):
-                        name = self.score.ordered_names[7]
-                except IndexError:
-                    pass
-                if name:
-                    self.player.name = name
-                    self.STATE = "PLAY"
+
+                if self.select_name < num and (pyxel.btnr(pyxel.KEY_DOWN) or pyxel.btnr(GAMEPAD_1_DOWN)
+                                               or pyxel.btnr(GAMEPAD_1_L2)):
+                    self.select_name += 1
+
+                if self.select_name > 0 and (pyxel.btnr(pyxel.KEY_UP) or pyxel.btnr(GAMEPAD_1_UP) or
+                                             pyxel.btnr(GAMEPAD_1_R2)):
+                    self.select_name -= 1
 
         elif self.STATE == "PLAY":
             self.ground.update()
@@ -101,6 +92,7 @@ class Game:
             elif pyxel.btn(pyxel.KEY_Y) or pyxel.btn(GAMEPAD_1_Y):
                 self.reset()
                 self.STATE = "INIT"
+                self.select_name = 0
 
     def draw(self):
         pyxel.cls(0)
@@ -125,14 +117,25 @@ class Game:
         x = W/2 - 80
         y = 30
         count = 1
+
         for name in self.score.ordered_names:
-            pyxel.text(x, y, str(count), 8)
-            pyxel.text(x + 20, y, name, 8)
-            pyxel.text(x + 80, y, str(self.score.results[name]), 8)
+            if count == self.select_name:
+                text_colour = 7
+            else:
+                text_colour = 8
+            pyxel.text(x, y, str(count), text_colour)
+            pyxel.text(x + 20, y, name, text_colour)
+            pyxel.text(x + 80, y, str(self.score.results[name]), text_colour)
             count += 1
             y += 10
-        pyxel.text((W/2) - 80, (H/2) + 30, "Select the number next to your alias to replay or", 8)
-        pyxel.text((W / 2) - 80, (H / 2) + 40, "To play as new user, hit 'X' ", 8)
+        text_colour = 8
+        if count == self.select_name:
+            text_colour = 7
+        pyxel.text(x, y, str(count), text_colour)
+        pyxel.text(x + 20, y, "New Player", text_colour)
+
+        pyxel.text((W/2) - 80, (H/2) + 30, "Use up or down keys to select player", 8)
+        pyxel.text((W / 2) - 80, (H / 2) + 40, "Press 'X' to select", 8)
 
 
 if __name__ == '__main__':
