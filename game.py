@@ -56,7 +56,6 @@ class Game:
 
         if self.STATE == "INIT":
             self.score.list_order()
-            name = False
             num = len(self.score.ordered_names) + 1
             if pyxel.btnp(pyxel.KEY_X) or pyxel.btn(GAMEPAD_1_X):
                 if self.select_name == num:
@@ -115,8 +114,10 @@ class Game:
     def initialise(self):
         self.score.list_order()
         x = W/2 - 80
-        y = 30
+        y = 60
         count = 1
+
+        pyxel.text(x, 10, "Space Game", 8)
 
         for name in self.score.ordered_names:
             if count == self.select_name:
@@ -134,8 +135,8 @@ class Game:
         pyxel.text(x, y, str(count), text_colour)
         pyxel.text(x + 20, y, "New Player", text_colour)
 
-        pyxel.text((W/2) - 80, (H/2) + 30, "Use up or down keys to select player", 8)
-        pyxel.text((W / 2) - 80, (H / 2) + 40, "Press 'X' to select", 8)
+        pyxel.text((W/2) - 80, (H/2) + 50, "Use up or down keys to select player", 8)
+        pyxel.text((W / 2) - 80, (H / 2) + 60, "Press 'X' to select", 8)
 
 
 if __name__ == '__main__':
