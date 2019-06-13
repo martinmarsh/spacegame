@@ -2,6 +2,7 @@ from config import W, H, TANK, GUN, LAND
 from object_helpers import PyxelObjectFixedList
 from random import randrange
 from shells import Shell
+from asteroids import Asteroid
 import pyxel
 import math
 
@@ -165,10 +166,15 @@ class Ground:
         y_start = prev_obj.get_last_y()
 
         if randrange(1, 7) == 5:
-            if randrange(1, 3) == 1:
+            if randrange(1, 3) == 2:
                 self.ground_objs.substitute(i, Tanks(W + 32, y_start, self.game, self.ground_colour, self.high_colour))
             else:
                 self.ground_objs.substitute(i, Gun(W + 32, y_start, self.game, self.ground_colour, self.high_colour))
+            if randrange(1, 4) == 2:
+                aster_y_max = H/2 - 20
+                aster_y = randrange(10, aster_y_max)
+                aster_y_speed = (aster_y_max - aster_y) * (randrange(0, 100)/32000)
+                self.game.asteroids.insert(Asteroid(self.game, W+32, aster_y, randrange(-30, -5)/10, aster_y_speed))
         else:
             if self.ground_objs.origin == 0:
                 self.jitter = randrange(-5, 6)

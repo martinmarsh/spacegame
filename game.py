@@ -19,7 +19,7 @@ class Game:
         self.score = Score(self)
         self.player = Player(self)
         self.STATE = "INIT"
-        self.bombs = self.shells = self.explosions = None
+        self.bombs = self.shells = self.explosions = self.asteroids = None
         self.STATE = "PLAY"
         self.reset()
         self.joys = 0
@@ -36,6 +36,7 @@ class Game:
         self.explosions = PyxelObjectPool()
         self.shells = PyxelObjectPool()
         self.bombs = PyxelObjectPool()
+        self.asteroids = PyxelObjectPool()
         
     def run(self):
         self.joys = 0
@@ -89,6 +90,7 @@ class Game:
             self.explosions.update()
             self.shells.update()
             self.bombs.update()
+            self.asteroids.update()
         elif self.STATE == "DEAD":
             # We use X on gamepad and not A which is for bombs to prevent accidental replay
             if pyxel.btn(pyxel.KEY_X) or pyxel.btn(GAMEPAD_1_X):
@@ -111,6 +113,7 @@ class Game:
             self.explosions.draw()
             self.shells.draw()
             self.bombs.draw()
+            self.asteroids.draw()
         elif self.STATE == "DEAD":
             pyxel.blt(40, H/2 - 50, 1, 0, 0, 255, 86)
             pyxel.text((W/2) - 30, (H/2) + 30, f"Total Score: {self.score.total}", 8)

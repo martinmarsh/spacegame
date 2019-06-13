@@ -1,10 +1,10 @@
-from random import randint as rand, random as randf
+from random import randint as rand, random as randf, randrange
 from object_helpers import PyxelObjectPool, Particle
 import math
 import pyxel
 
 
-class Shell:
+class Asteroid:
 
     def __init__(self, game, x, y, x_inc=-0.5, y_inc=-1):
         self.x = x
@@ -23,7 +23,7 @@ class Shell:
         if self.player.x <= self.x <= self.player.x + 16 and self.player.y <= self.y <= self.player.y + 10:
             # take one life
             pyxel.play(0, 1)
-            self.game.explosions.insert(ShellHitExplosion(self.x, self.y))
+            self.game.explosions.insert(AsteroidHitExplosion(self.x, self.y))
             self.game.shells.reset()
             self.die = True
             self.player.score.player_hit()
@@ -32,10 +32,10 @@ class Shell:
             self.die = True
 
     def draw(self):
-        pyxel.rect(self.x-1, self.y-2, self.x+1, self.y+2, 8)
+        pyxel.blt(self.x, self.y, 0, 16, 16, 16, 16, 0)
 
 
-class ShellHitExplosion:
+class AsteroidHitExplosion:
 
     def __init__(self, x, y):
         self.particles = PyxelObjectPool()
