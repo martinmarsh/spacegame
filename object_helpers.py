@@ -1,6 +1,14 @@
 import pyxel
 
 
+def is_overlapped(x, y, xs, ys, x2, y2, x2s, y2s):
+    if x2 > x + xs or x > x2 + x2s:
+        return False
+    if y2 > y + ys or y > y2 + y2s:
+        return False
+    return True
+
+
 class ObjectFixedList:
     """
      ObjectFixedList is a circular data structure of fix length where objects are replaced at the current position

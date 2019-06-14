@@ -1,5 +1,5 @@
-from random import randint as rand, random as randf, randrange
-from object_helpers import PyxelObjectPool, Particle
+from random import randint as rand, random as randf
+from object_helpers import PyxelObjectPool, Particle, is_overlapped
 import math
 import pyxel
 
@@ -20,7 +20,7 @@ class Asteroid:
         self.x += self.x_increment
         self.y += self.y_increment
 
-        if self.player.x <= self.x <= self.player.x + 16 and self.player.y <= self.y <= self.player.y + 10:
+        if is_overlapped(self.x, self.y, 16, 16, self.player.x, self.player.y + 2, 16, 10):
             # take one life
             pyxel.play(0, 1)
             self.game.explosions.insert(AsteroidHitExplosion(self.x, self.y))
