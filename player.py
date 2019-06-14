@@ -24,6 +24,8 @@ class Player:
     def reset(self):
         self.x = W / 2
         self.y = H / 3
+        self.reload_timer = 120
+        self.reload_counter = 0
         self.collision = False
         self.magazine = self.magazine_size
         self.reload_counter = self.reload_timer
@@ -41,7 +43,7 @@ class Player:
             pyxel.play(0, 1)
             self.reset()
 
-        if (pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(GAMEPAD_1_A) or pyxel.btn(GAMEPAD_1_B)) and self.magazine:
+        if (pyxel.btnp(pyxel.KEY_SPACE) or pyxel.btnp(GAMEPAD_1_A) or pyxel.btn(GAMEPAD_1_B)) and self.magazine > 0:
             self.game.bombs.insert(Bomb(self.game, self.x, self.y))
             self.magazine -= 1
 
